@@ -1,0 +1,136 @@
+'use client';
+
+import { motion } from 'framer-motion';
+import Link from 'next/link';
+
+export default function Home() {
+  return (
+    <main className="min-h-screen bg-gradient-to-b from-gray-900 via-teal-900 to-black text-white font-sans">
+      {/* Header */}
+      <header className="sticky top-0 z-50 flex flex-wrap md:flex-nowrap justify-between items-center px-6 py-4 bg-black/90 backdrop-blur shadow-md border-b border-teal-600">
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-teal-400 tracking-wide mb-2 md:mb-0 drop-shadow-lg">Muhammad Maaz</h1>
+
+        {/* Desktop Nav */}
+        <nav className="hidden md:flex space-x-6 text-base sm:text-lg">
+          <Link href="#" className="hover:text-teal-300 transition duration-300">Home</Link>
+          <Link href="#skills" className="hover:text-teal-300 transition duration-300">Skills</Link>
+          <Link href="#projects" className="hover:text-teal-300 transition duration-300">Projects</Link>
+          <Link href="#contact" className="hover:text-teal-300 transition duration-300">Contact</Link>
+          <Link href="https://github.com/mmaaz-497" target="_blank" className="hover:text-teal-300 transition duration-300">GitHub</Link>
+          <Link href="https://www.linkedin.com/in/muhammad-maaz-5448b5336?" target="_blank" className="hover:text-teal-300 transition duration-300">LinkedIn</Link>
+        </nav>
+
+        {/* Mobile Nav */}
+        <div className="md:hidden">
+          <details className="relative">
+            <summary className="cursor-pointer text-teal-400 font-semibold">Menu</summary>
+            <div className="absolute right-0 mt-2 bg-black border border-teal-700 rounded-lg shadow-lg p-4 z-50 flex flex-col space-y-3 text-sm">
+              <Link href="#" className="hover:text-teal-300">Home</Link>
+              <Link href="#skills" className="hover:text-teal-300">Skills</Link>
+              <Link href="#projects" className="hover:text-teal-300">Projects</Link>
+              <Link href="#contact" className="hover:text-teal-300">Contact</Link>
+              <Link href="https://github.com/mmaaz-497" target="_blank" className="hover:text-teal-300">GitHub</Link>
+              <Link href="https://www.linkedin.com/in/muhammad-maaz-5448b5336?" target="_blank" className="hover:text-teal-300">LinkedIn</Link>
+            </div>
+          </details>
+        </div>
+      </header>
+
+      {/* Hero Section */}
+      <section className="flex flex-col items-center justify-center min-h-[80vh] text-center px-4 py-20 bg-gradient-to-b from-teal-900 via-teal-800 to-black">
+        <motion.h2
+          className="text-5xl md:text-7xl font-extrabold text-teal-400 mb-6 drop-shadow-xl"
+          initial={{ opacity: 0, y: -30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1 }}
+        >
+          Hi, I&apos;m Muhammad Maaz
+        </motion.h2>
+
+        <motion.p
+          className="text-base sm:text-lg md:text-2xl max-w-3xl text-teal-200 px-2"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5, duration: 1 }}
+        >
+          I am a passionate Full-Stack Developer with a strong foundation in modern web technologies like JavaScript, React, Next.js, and Node.js. 
+          I love building efficient, user-friendly applications and continuously learning new tools and techniques to improve my skills. 
+          My goal is to create impactful software solutions that solve real-world problems and provide great user experiences.
+          Alongside web development, I am also learning Generative AI to build intelligent applications that combine creativity with cutting-edge technology.
+          My aim is to blend AI with full-stack development for smarter, more dynamic user experiences.
+        </motion.p>
+      </section>
+
+      {/* Skills Section */}
+      <section id="skills" className="px-6 py-20 bg-gradient-to-b from-black via-teal-900 to-teal-950">
+        <h3 className="text-3xl md:text-5xl font-bold mb-10 text-center text-teal-400 drop-shadow-md">My Skills</h3>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 text-center text-teal-100 font-medium">
+          {[
+            'HTML', 'CSS', 'JavaScript', 'TypeScript',
+            'React', 'Tailwind CSS', 'Node.js', 'Next.js',
+            'Python','Figma','Sanity'
+          ].map((skill, index) => (
+            <div key={index} className="bg-gradient-to-tr from-orange-500 to-orange-700 rounded-xl shadow-lg hover:shadow-orange-500 p-5 border border-orange-600 transition duration-300 cursor-pointer text-black font-semibold">
+              {skill}
+            </div>
+          ))}
+        </div>
+        <p className="text-center mt-8 text-teal-300 text-sm">
+          I specialize in programming languages with practical experience in user interface design and managing data workflows.
+        </p>
+      </section>
+
+      {/* Projects Section */}
+      <section id="projects" className="px-6 py-20 bg-[#0a0a0a]">
+        <h3 className="text-3xl md:text-5xl font-bold mb-12 text-center text-teal-400 drop-shadow-md">My Projects</h3>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          {[
+            { title: 'Growth Mindset App', url: 'https://mmaaz-497-growth-mindset-app-gfeevb.streamlit.app/' },
+            { title: 'CV Generator', url: 'https://dynamic-resume-builder-2hsdy3cpc.vercel.app/' },
+            { title: 'Personal Library', url: 'https://rk-personallibrarymanager.streamlit.app/' },
+            { title: 'Unit Convertor', url: 'https://mmaaz-497-unit-convertor-app-unit-convertor-sht9oj.streamlit.app/' },
+            { title: 'Interative Resume', url: 'https://static-interactive-resume-6scxzj3x8.vercel.app/' },
+            { title: 'Custom CSS Portfolio', url: 'https://custom-css-responsive-portfolio.vercel.app/' },
+            { title: 'Resturant Website', url: 'https://quick-commerce-hackathon-zthw-72haph6dn.vercel.app/' },
+            { title: 'Password Strength Meter', url: 'https://mmaaz-497-password-strength-meter-password-generator-5nohxp.streamlit.app/' },
+            { title: 'Task Manager', url: 'https://task-manager-3e07is8fb-muhammad-maazs-projects-50d61d23.vercel.app/'},
+            { title: 'Random Joke Generator ', url: 'https://mmaaz-497-random-joke-genrator-main-0mjngs.streamlit.app/'},
+            { title: 'Planets Weight Calculator', url: 'https://mmaaz-497-time-zone-convertor-main-ossttg.streamlit.app/'},
+            { title: 'Time Zone Converter', url: 'https://mmaaz-497-time-zone-convertor-main-ossttg.streamlit.app/'},
+            { title: 'Cafe Management System', url: 'https://mmaaz-497-cafe-managment-system-main-tkwitb.streamlit.app/'},
+            { title: 'AI Stateful Chatbot:', url: 'https://web-production-d216f.up.railway.app/'},
+          ].map((project, index) => (
+            <a
+              key={index}
+              href={project.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-gradient-to-tr from-teal-900 to-black p-6 rounded-xl shadow-lg border border-teal-700 hover:shadow-orange-500 hover:bg-orange-900 transition duration-300"
+            >
+              <h4 className="text-xl font-semibold mb-2 text-orange-400">{project.title}</h4>
+              <p className="text-sm text-teal-200 break-words">{project.url}</p>
+            </a>
+          ))}
+        </div>
+      </section>
+
+      {/* Contact Section */}
+      <section id="contact" className="px-6 py-20 bg-gradient-to-b from-teal-950 via-teal-900 to-black">
+        <h2 className="text-3xl md:text-5xl font-bold mb-6 text-center text-teal-400 drop-shadow-md">Contact Me</h2>
+        <p className="text-center text-teal-200 mb-6 text-base sm:text-lg">
+          I&apos;m open to collaboration, internships, or projects. Let&apos;s connect!
+        </p>
+        <div className="flex flex-col items-center gap-3 text-base sm:text-lg">
+          <Link href="mailto:mmaazjatt497@gmail.com" className="text-teal-400 hover:underline">mmaazjatt497@gmail.com</Link>
+          <Link href="https://github.com/mmaaz-497" target="_blank" className="text-teal-400 hover:underline">GitHub Profile</Link>
+          <Link href="https://www.linkedin.com/in/muhammad-maaz-5448b5336?" target="_blank" className="text-teal-400 hover:underline">LinkedIn Profile</Link>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="text-center text-teal-300 py-6 border-t border-teal-800 bg-black text-sm drop-shadow-md">
+        &copy; {new Date().getFullYear()} Muhammad Maaz. Crafted with 🧡 using Next.js & Tailwind CSS.
+      </footer>
+    </main>
+  );
+}
