@@ -44,20 +44,18 @@ export default function Home() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1 }}
         >
-          Hi, I&apos;m Muhammad Maaz
+          Hi, I&apos;m Agentic AI & Full-Stack Developer
         </motion.h2>
 
         <motion.p
-          className="text-base sm:text-lg md:text-2xl max-w-3xl text-teal-200 px-2"
+          className="text-base sm:text-lg md:text-2xl max-w-5xl text-teal-200 px-2"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.5, duration: 1 }}
         >
-          I am a passionate Full-Stack Developer with a strong foundation in modern web technologies like JavaScript, React, Next.js, and Node.js. 
-          I love building efficient, user-friendly applications and continuously learning new tools and techniques to improve my skills. 
-          My goal is to create impactful software solutions that solve real-world problems and provide great user experiences.
-          Alongside web development, I am also learning Generative AI to build intelligent applications that combine creativity with cutting-edge technology.
-          My aim is to blend AI with full-stack development for smarter, more dynamic user experiences.
+          I am an <b>Agentic AI Developer</b> and <b>Full-Stack Engineer</b> specializing in building intelligent, scalable, and high-performance digital solutions. With expertise in <b>Next.js, Node.js, Python, Streamlit, and the OpenAI Agents SDK</b>, I design systems that combine strong engineering with advanced <b>AI automation.</b>
+My work focuses on delivering <b>AI chatbots, agentic workflow automation, full-stack web applications, data tools, and seamless API integrations</b>—all built with precision, innovation, and fast turnaround. I approach every project with a problem-solving mindset, ensuring smooth execution even for complex requirements.
+As an independent developer, my goal is to help businesses leverage the power of <b>AI</b> and <b>agentic systems</b> to operate smarter, faster, and more efficiently. I am committed to creating intelligent experiences that not only perform but scale—moving towards a long-term vision of becoming an <b>AI Architect </b>who builds next-generation <b>agentic ecosystems</b>, automation pipelines, and intelligent applications.
         </motion.p>
       </section>
 
@@ -68,7 +66,8 @@ export default function Home() {
           {[
             'HTML', 'CSS', 'JavaScript', 'TypeScript',
             'React', 'Tailwind CSS', 'Node.js', 'Next.js',
-            'Python','Figma','Sanity'
+            'Python','Figma','Sanity','Streamlit',
+            'OpenAI Agents SDK', 'Git & GitHub','Prompt & Context Engineering'
           ].map((skill, index) => (
             <div key={index} className="bg-gradient-to-tr from-orange-500 to-orange-700 rounded-xl shadow-lg hover:shadow-orange-500 p-5 border border-orange-600 transition duration-300 cursor-pointer text-black font-semibold">
               {skill}
@@ -99,6 +98,8 @@ export default function Home() {
             { title: 'Time Zone Converter', url: 'https://mmaaz-497-time-zone-convertor-main-ossttg.streamlit.app/'},
             { title: 'Cafe Management System', url: 'https://mmaaz-497-cafe-managment-system-main-tkwitb.streamlit.app/'},
             { title: 'AI Stateful Chatbot:', url: 'https://web-production-d216f.up.railway.app/'},
+            { title: 'Agentic Essay Pilot:', url: 'https://agentic-essay-pilot-lc18qg62a-muhammad-maazs-projects-50d61d23.vercel.app'},
+
           ].map((project, index) => (
             <a
               key={index}
@@ -118,7 +119,7 @@ export default function Home() {
       <section id="contact" className="px-6 py-20 bg-gradient-to-b from-teal-950 via-teal-900 to-black">
         <h2 className="text-3xl md:text-5xl font-bold mb-6 text-center text-teal-400 drop-shadow-md">Contact Me</h2>
         <p className="text-center text-teal-200 mb-6 text-base sm:text-lg">
-          I&apos;m open to collaboration, internships, or projects. Let&apos;s connect!
+          Open to professional collaborations and project opportunities. Let&apos;s connect.
         </p>
         <div className="flex flex-col items-center gap-3 text-base sm:text-lg">
           <Link href="mailto:mmaazjatt497@gmail.com" className="text-teal-400 hover:underline">mmaazjatt497@gmail.com</Link>
