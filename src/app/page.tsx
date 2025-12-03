@@ -85,20 +85,20 @@ As an independent developer, my goal is to help businesses leverage the power of
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {[
             { title: 'Growth Mindset App', url: 'https://mmaaz-497-growth-mindset-app-gfeevb.streamlit.app/' },
-            { title: 'CV Generator', url: 'https://dynamic-resume-builder-2hsdy3cpc.vercel.app/' },
+            { title: 'CV Generator', url: 'https://dynamic-resume-builder-xi-orcin.vercel.app/' },
             { title: 'Personal Library', url: 'https://rk-personallibrarymanager.streamlit.app/' },
             { title: 'Unit Convertor', url: 'https://mmaaz-497-unit-convertor-app-unit-convertor-sht9oj.streamlit.app/' },
-            { title: 'Interative Resume', url: 'https://static-interactive-resume-6scxzj3x8.vercel.app/' },
-            { title: 'Custom CSS Portfolio', url: 'https://custom-css-responsive-portfolio.vercel.app/' },
-            { title: 'Resturant Website', url: 'https://quick-commerce-hackathon-zthw-72haph6dn.vercel.app/' },
+            { title: 'Interative Resume', url: 'https://static-interactive-resume-ochre-one.vercel.app/' },
+            { title: 'Blog Website', url: 'https://blog-website-beige-psi.vercel.app/' },
+            { title: 'Resturant Website', url: 'https://quick-commerce-hackathon-zthw.vercel.app/' },
             { title: 'Password Strength Meter', url: 'https://mmaaz-497-password-strength-meter-password-generator-5nohxp.streamlit.app/' },
-            { title: 'Task Manager', url: 'https://task-manager-3e07is8fb-muhammad-maazs-projects-50d61d23.vercel.app/'},
+            { title: 'Task Manager', url: 'https://task-manager-one-psi-50.vercel.app/'},
             { title: 'Random Joke Generator ', url: 'https://mmaaz-497-random-joke-genrator-main-0mjngs.streamlit.app/'},
             { title: 'Planets Weight Calculator', url: 'https://mmaaz-497-time-zone-convertor-main-ossttg.streamlit.app/'},
             { title: 'Time Zone Converter', url: 'https://mmaaz-497-time-zone-convertor-main-ossttg.streamlit.app/'},
             { title: 'Cafe Management System', url: 'https://mmaaz-497-cafe-managment-system-main-tkwitb.streamlit.app/'},
-            { title: 'AI Stateful Chatbot:', url: 'https://web-production-d216f.up.railway.app/'},
-            { title: 'Agentic Essay Pilot:', url: 'https://agentic-essay-pilot-lc18qg62a-muhammad-maazs-projects-50d61d23.vercel.app'},
+            { title: 'Cooking Recipies AI Agent:', url: 'https://mmaaz-497-cooking-recipies-ai-agent-main-owgks1.streamlit.app/'},
+            { title: 'Agentic Essay Pilot:', url: 'https://agentic-essay-pilot.vercel.app/'},
 
           ].map((project, index) => (
             <a
