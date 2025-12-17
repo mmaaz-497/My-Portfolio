@@ -99,7 +99,7 @@ As an independent developer, my goal is to help businesses leverage the power of
             { title: 'Cafe Management System', url: 'https://mmaaz-497-cafe-managment-system-main-tkwitb.streamlit.app/'},
             { title: 'Cooking Recipies AI Agent:', url: 'https://mmaaz-497-cooking-recipies-ai-agent-main-owgks1.streamlit.app/'},
             { title: 'Agentic Essay Pilot:', url: 'https://agentic-essay-pilot.vercel.app/'},
-            { title: 'Physical AI Humanoid Robotics Textbook:', url: 'https://mmaaz-497.github.io/Physical-AI-Humanoid-Robotics-Textbook/'},
+            { title: 'Physical AI Humanoid & Robotics Textbook:', url: 'https://physical-ai-humanoid-robotics-textb-vert.vercel.app/'},
 
 
           ].map((project, index) => (
