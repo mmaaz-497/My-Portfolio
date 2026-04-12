@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="100%" height="100%">
+  <defs>
+    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#6366f1;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <!-- Chat bubble -->
+  <path d="M24 20 C24 15.6 27.6 12 32 12 L96 12 C100.4 12 104 15.6 104 20 L104 72 C104 76.4 100.4 80 96 80 L64 80 L40 104 L40 80 L32 80 C27.6 80 24 76.4 24 72 Z" fill="url(#grad1)" stroke="#4f46e5" stroke-width="2"/>
+  <!-- Sparkle/star lines representing AI prompts -->
+  <line x1="64" y1="30" x2="64" y2="42" stroke="white" stroke-width="3" stroke-linecap="round"/>
+  <line x1="64" y1="50" x2="64" y2="62" stroke="white" stroke-width="3" stroke-linecap="round"/>
+  <line x1="44" y1="46" x2="56" y2="46" stroke="white" stroke-width="3" stroke-linecap="round"/>
+  <line x1="72" y1="46" x2="84" y2="46" stroke="white" stroke-width="3" stroke-linecap="round"/>
+  <!-- Diagonal sparkle lines -->
+  <line x1="50" y1="32" x2="56" y2="38" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="78" y1="32" x2="72" y2="38" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="50" y1="60" x2="56" y2="54" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="78" y1="60" x2="72" y2="54" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+</svg>
