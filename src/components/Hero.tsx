@@ -7,68 +7,112 @@ import ParticlesBackground from './ParticlesBackground';
 
 export default function Hero() {
   return (
-    <section className="relative flex flex-col items-center justify-center min-h-[80vh] text-center px-4 py-20 bg-gradient-to-b from-teal-900 via-teal-800 to-black overflow-hidden">
+    <section id="hero" className="relative flex flex-col items-center justify-center min-h-screen text-center px-4 py-20 bg-[#0A0A0A] overflow-hidden">
       {/* Particles Background */}
       <ParticlesBackground />
-      {/* Profile Photo Placeholder */}
+
+      {/* Gradient Orb */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#00F5FF]/5 rounded-full blur-[120px] pointer-events-none" />
+
+      {/* Profile Photo */}
       <motion.div
-        className="w-32 h-32 md:w-40 md:h-40 rounded-full bg-gradient-to-tr from-teal-400 to-orange-500 p-1 mb-8 shadow-2xl"
+        className="relative mb-8 z-10"
         initial={{ scale: 0, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ duration: 0.8, ease: 'easeOut' }}
       >
-        <div className="w-full h-full rounded-full bg-gray-800 flex items-center justify-center text-5xl md:text-6xl font-bold text-teal-400 overflow-hidden">
-          <img src="/profile.jpg" alt="Muhammad Maaz" className="w-full h-full object-cover rounded-full" />
+        <div className="w-36 h-36 md:w-44 md:h-44 rounded-full p-[3px] bg-gradient-to-tr from-[#00F5FF] via-[#00BFFF] to-[#00F5FF] shadow-[0_0_40px_rgba(0,245,255,0.3)]">
+          <div className="w-full h-full rounded-full bg-[#1A1A1A] flex items-center justify-center overflow-hidden">
+            <img
+              src="/profile.jpg"
+              alt="Muhammad Maaz"
+              className="w-full h-full object-cover rounded-full"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.style.display = 'none';
+                const parent = target.parentElement;
+                if (parent) {
+                  parent.innerHTML = '<span class="text-5xl md:text-6xl font-bold bg-gradient-to-r from-[#00F5FF] to-[#00BFFF] bg-clip-text text-transparent">MM</span>';
+                }
+              }}
+            />
+          </div>
         </div>
+        {/* Status Badge */}
+        <motion.div
+          className="absolute -bottom-2 left-1/2 -translate-x-1/2 px-4 py-1 bg-[#0A0A0A] border border-[#00F5FF]/30 rounded-full text-xs font-semibold text-[#00F5FF] whitespace-nowrap"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1, duration: 0.5 }}
+        >
+          <span className="inline-block w-2 h-2 bg-[#00F5FF] rounded-full mr-2 animate-pulse" />
+          Available for Work
+        </motion.div>
       </motion.div>
 
-      <motion.h2
-        className="text-4xl sm:text-5xl md:text-7xl font-extrabold text-teal-400 mb-6 drop-shadow-xl"
-        initial={{ opacity: 0, y: -30 }}
+      {/* Main Heading */}
+      <motion.h1
+        className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-black text-[#F1F1F1] mb-4 leading-tight z-10"
+        initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1 }}
+        transition={{ duration: 0.8 }}
       >
-        Hi, I&apos;m <TypewriterEffect 
-          texts={['an Agentic AI Developer', 'a Full-Stack Engineer', 'a Python Expert', 'a Next.js Specialist']}
-          typingSpeed={80}
-          deletingSpeed={50}
-          delayBetween={2000}
-        />
-      </motion.h2>
+        Hi, I&apos;m{' '}
+        <span className="bg-gradient-to-r from-[#00F5FF] via-[#00BFFF] to-[#00F5FF] bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient">
+          Muhammad Maaz
+        </span>
+      </motion.h1>
 
-      <motion.p
-        className="text-base sm:text-lg md:text-xl max-w-5xl text-teal-200 px-2 mb-8 leading-relaxed"
+      {/* Typewriter Subtitle */}
+      <motion.div
+        className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#A3A3A3] mb-6 z-10 h-12"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 0.5, duration: 1 }}
+        transition={{ delay: 0.3, duration: 0.8 }}
       >
-        I am an <b>Agentic AI Developer</b> and <b>Full-Stack Engineer</b> specializing in building intelligent, scalable, and high-performance digital solutions. With expertise in <b>Next.js, Node.js, Python, Streamlit, and the OpenAI Agents SDK</b>, I design systems that combine strong engineering with advanced <b>AI automation.</b>
+        <TypewriterEffect
+          texts={['Agentic AI Developer', 'Full-Stack Engineer', 'Python Expert', 'Next.js Specialist']}
+          typingSpeed={70}
+          deletingSpeed={40}
+          delayBetween={2000}
+        />
+      </motion.div>
+
+      {/* Description */}
+      <motion.p
+        className="text-base sm:text-lg md:text-xl max-w-3xl text-[#A3A3A3] px-2 mb-10 leading-relaxed z-10"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.5, duration: 0.8 }}
+      >
+        Building intelligent, scalable solutions with{' '}
+        <span className="text-[#00F5FF] font-semibold">Next.js</span>,{' '}
+        <span className="text-[#00F5FF] font-semibold">Python</span>, and{' '}
+        <span className="text-[#00F5FF] font-semibold">AI Agents</span>{' '}
+        that drive innovation.
       </motion.p>
 
+      {/* CTA Buttons */}
       <motion.div
-        className="flex flex-col sm:flex-row gap-4"
+        className="flex flex-col sm:flex-row gap-4 z-10"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 1, duration: 0.8 }}
+        transition={{ delay: 0.7, duration: 0.8 }}
       >
         <Link
           href="#projects"
-          className="px-8 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white font-semibold rounded-lg shadow-lg hover:shadow-orange-500/50 hover:scale-105 transition-all duration-300"
+          className="group relative px-8 py-4 bg-[#00F5FF] text-[#0A0A0A] font-bold text-sm uppercase tracking-wider rounded-lg overflow-hidden transition-all duration-300 hover:shadow-[0_0_30px_rgba(0,245,255,0.5)] hover:scale-105"
         >
-          View My Work
+          <span className="relative z-10">View Projects</span>
+          <div className="absolute inset-0 bg-gradient-to-r from-[#00BFFF] to-[#00F5FF] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
         </Link>
-        <Link
-          href="#contact"
-          className="px-8 py-3 bg-transparent border-2 border-teal-400 text-teal-400 font-semibold rounded-lg hover:bg-teal-400 hover:text-black transition-all duration-300"
-        >
-          Get In Touch
-        </Link>
+
         <a
           href="/resume.pdf"
           download
-          className="px-8 py-3 bg-gradient-to-r from-teal-500 to-teal-600 text-white font-semibold rounded-lg shadow-lg hover:shadow-teal-500/50 hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2"
+          className="group px-8 py-4 border-2 border-[#00F5FF]/50 text-[#00F5FF] font-bold text-sm uppercase tracking-wider rounded-lg hover:bg-[#00F5FF]/10 hover:border-[#00F5FF] hover:shadow-[0_0_20px_rgba(0,245,255,0.2)] transition-all duration-300 flex items-center justify-center gap-3"
         >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-5 h-5 transition-transform group-hover:translate-y-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
           </svg>
           Download CV
@@ -77,14 +121,18 @@ export default function Hero() {
 
       {/* Scroll Indicator */}
       <motion.div
-        className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10"
         animate={{ y: [0, 10, 0] }}
-        transition={{ repeat: Infinity, duration: 1.5 }}
+        transition={{ repeat: Infinity, duration: 1.5, ease: 'easeInOut' }}
         aria-label="Scroll down"
       >
-        <svg className="w-6 h-6 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-        </svg>
+        <div className="w-6 h-10 border-2 border-[#00F5FF]/30 rounded-full flex justify-center">
+          <motion.div
+            className="w-1 h-3 bg-[#00F5FF] rounded-full mt-2"
+            animate={{ y: [0, 12, 0] }}
+            transition={{ repeat: Infinity, duration: 1.5, ease: 'easeInOut' }}
+          />
+        </div>
       </motion.div>
     </section>
   );

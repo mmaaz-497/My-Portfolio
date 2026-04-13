@@ -11,6 +11,7 @@
   "dependencies": {
     "framer-motion": "^12.15.0",
     "next": "^16.0.10",
+    "playwright": "^1.59.1",
     "react": "^19.2.3",
     "react-dom": "^19.2.3"
   },
@@ -24,5 +25,17 @@
     "eslint-config-next": "15.3.2",
     "tailwindcss": "^4",
     "typescript": "^5"
-  }
+  },
+  "description": "A modern, responsive portfolio website built with Next.js 15, TypeScript, and Tailwind CSS. This project showcases my skills as a Full-Stack Developer and features smooth animations powered by Framer Motion.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mmaaz-497/My-Portfolio.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mmaaz-497/My-Portfolio/issues"
+  },
+  "homepage": "https://github.com/mmaaz-497/My-Portfolio#readme"
 }

@@ -6,7 +6,8 @@ export const siteConfig = {
   description: 'Agentic AI Developer and Full-Stack Engineer specializing in building intelligent, scalable, and high-performance digital solutions with Next.js, Python, OpenAI Agents SDK, and modern web technologies.',
   url: 'https://muhammadmaaz.vercel.app', // Replace with your actual domain
   email: 'mmaazjatt497@gmail.com',
-  formspreeUrl: 'https://formspree.io/f/mojyaele', // TODO: Replace with your actual Formspree form ID
+  whatsapp: '+923001234567', // Replace with your actual WhatsApp number
+  formspreeUrl: 'https://formspree.io/f/mojyaele',
   social: {
     github: 'https://github.com/mmaaz-497',
     linkedin: 'https://www.linkedin.com/in/muhammad-maaz-5448b5336',

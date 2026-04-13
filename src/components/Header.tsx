@@ -10,6 +10,7 @@ const navLinks = [
   { href: '#about', label: 'About', section: 'about' },
   { href: '#skills', label: 'Skills', section: 'skills' },
   { href: '#projects', label: 'Projects', section: 'projects' },
+  { href: '#experience', label: 'Experience', section: 'experience' },
   { href: '#contact', label: 'Contact', section: 'contact' },
 ];
 
@@ -30,14 +31,11 @@ export default function Header() {
   const [activeSection, setActiveSection] = useState('hero');
   const [scrolled, setScrolled] = useState(false);
 
-  // Track scroll position for active section and header styling
   useEffect(() => {
     const handleScroll = () => {
-      // Header background on scroll
       setScrolled(window.scrollY > 50);
 
-      // Active section detection
-      const sections = ['hero', 'about', 'skills', 'projects', 'contact'];
+      const sections = ['hero', 'about', 'skills', 'projects', 'experience', 'contact'];
       const scrollPosition = window.scrollY + 150;
 
       for (let i = sections.length - 1; i >= 0; i--) {
@@ -63,25 +61,23 @@ export default function Header() {
 
   return (
     <header
-      className={`sticky top-0 z-50 transition-all duration-300 ${
+      className={`sticky top-0 z-50 transition-all duration-500 ${
         scrolled
-          ? 'bg-black/95 backdrop-blur-xl shadow-lg shadow-black/20 border-b border-teal-600/50'
-          : 'bg-gradient-to-b from-black/80 to-transparent backdrop-blur-md border-b border-transparent'
+          ? 'bg-[#0A0A0A]/90 backdrop-blur-2xl shadow-[0_4px_30px_rgba(0,245,255,0.08)] border-b border-[#00F5FF]/10'
+          : 'bg-transparent border-b border-transparent'
       }`}
     >
-      <div className="flex flex-wrap md:flex-nowrap justify-between items-center px-6 py-4 max-w-7xl mx-auto">
+      <div className="flex flex-wrap md:flex-nowrap justify-between items-center px-6 lg:px-12 py-4 max-w-[1400px] mx-auto">
         {/* Logo */}
         <Link
           href="#"
           onClick={() => handleNavClick('hero')}
-          className="group flex items-center gap-2 text-xl sm:text-2xl font-extrabold tracking-wide drop-shadow-lg"
+          className="group flex items-center gap-1 text-2xl md:text-3xl font-black tracking-tight"
         >
-          <span className="bg-gradient-to-r from-teal-400 via-teal-300 to-orange-400 bg-clip-text text-transparent group-hover:from-orange-400 group-hover:to-teal-400 transition-all duration-500">
-            {siteConfig.name}
+          <span className="text-[#F1F1F1] group-hover:text-[#00F5FF] transition-colors duration-300">
+            Maaz
           </span>
-          <span className="text-orange-400 text-2xl sm:text-3xl group-hover:scale-110 transition-transform duration-300">
-            .
-          </span>
+          <span className="text-[#00F5FF] text-3xl md:text-4xl animate-pulse">.</span>
         </Link>
 
         {/* Desktop Nav */}
@@ -93,36 +89,31 @@ export default function Header() {
                 key={link.label}
                 href={link.href}
                 onClick={() => handleNavClick(link.section)}
-                className={`relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-300 group ${
+                className={`relative px-4 py-2 text-sm font-semibold tracking-wide uppercase transition-all duration-300 group ${
                   isActive
-                    ? 'text-teal-400'
-                    : 'text-teal-200/80 hover:text-teal-300'
+                    ? 'text-[#00F5FF]'
+                    : 'text-[#A3A3A3] hover:text-[#F1F1F1]'
                 }`}
               >
                 <span className="relative z-10">{link.label}</span>
-                {isActive && (
-                  <motion.span
-                    layoutId="activeNavIndicator"
-                    className="absolute inset-0 bg-teal-400/10 rounded-lg"
-                    transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
-                  />
-                )}
-                <span
-                  className={`absolute bottom-0 left-1/2 -translate-x-1/2 h-0.5 bg-gradient-to-r from-teal-400 to-orange-400 rounded-full transition-all duration-300 ${
-                    isActive ? 'w-3/4' : 'w-0 group-hover:w-3/4'
+                <motion.span
+                  className={`absolute bottom-0 left-1/2 -translate-x-1/2 h-[2px] bg-[#00F5FF] rounded-full transition-all duration-300 ${
+                    isActive ? 'w-full shadow-[0_0_10px_#00F5FF]' : 'w-0 group-hover:w-full'
                   }`}
+                  layoutId="activeNavIndicator"
+                  transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
                 />
               </Link>
             );
           })}
 
           {/* Social Icons */}
-          <div className="flex items-center gap-2 ml-4 pl-4 border-l border-teal-700/50">
+          <div className="flex items-center gap-2 ml-4 pl-4 border-l border-[#00F5FF]/20">
             <Link
               href={siteConfig.social.github}
               target="_blank"
               rel="noopener noreferrer"
-              className="p-2 text-teal-300 hover:text-orange-400 hover:bg-teal-400/10 rounded-lg transition-all duration-300"
+              className="p-2 text-[#A3A3A3] hover:text-[#00F5FF] hover:bg-[#00F5FF]/5 rounded-lg transition-all duration-300"
               aria-label="GitHub"
             >
               <GithubIcon className="w-5 h-5" />
@@ -131,35 +122,44 @@ export default function Header() {
               href={siteConfig.social.linkedin}
               target="_blank"
               rel="noopener noreferrer"
-              className="p-2 text-teal-300 hover:text-orange-400 hover:bg-teal-400/10 rounded-lg transition-all duration-300"
+              className="p-2 text-[#A3A3A3] hover:text-[#00F5FF] hover:bg-[#00F5FF]/5 rounded-lg transition-all duration-300"
               aria-label="LinkedIn"
             >
               <LinkedInIcon className="w-5 h-5" />
             </Link>
           </div>
+
+          {/* Hire Me Button */}
+          <Link
+            href="#contact"
+            onClick={() => handleNavClick('contact')}
+            className="ml-4 px-6 py-2 border border-[#00F5FF] text-[#00F5FF] font-semibold text-sm uppercase tracking-wide rounded-lg hover:bg-[#00F5FF]/10 hover:shadow-[0_0_20px_rgba(0,245,255,0.3)] transition-all duration-300"
+          >
+            Hire Me
+          </Link>
         </nav>
 
         {/* Mobile Menu Button */}
         <div className="md:hidden">
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="text-teal-400 font-semibold focus:outline-none focus:ring-2 focus:ring-teal-400 rounded p-2 hover:bg-teal-400/10 transition-colors"
+            className="text-[#00F5FF] focus:outline-none p-2"
             aria-label={isOpen ? 'Close menu' : 'Open menu'}
             aria-expanded={isOpen}
           >
             <div className="w-6 h-6 flex flex-col justify-center items-center relative">
               <span
-                className={`block w-6 h-0.5 bg-teal-400 transition-all duration-300 absolute ${
+                className={`block w-6 h-0.5 bg-[#00F5FF] transition-all duration-300 absolute ${
                   isOpen ? 'rotate-45' : '-translate-y-2'
                 }`}
               />
               <span
-                className={`block w-6 h-0.5 bg-teal-400 transition-all duration-300 absolute ${
+                className={`block w-6 h-0.5 bg-[#00F5FF] transition-all duration-300 absolute ${
                   isOpen ? 'opacity-0' : 'opacity-100'
                 }`}
               />
               <span
-                className={`block w-6 h-0.5 bg-teal-400 transition-all duration-300 absolute ${
+                className={`block w-6 h-0.5 bg-[#00F5FF] transition-all duration-300 absolute ${
                   isOpen ? '-rotate-45' : 'translate-y-2'
                 }`}
               />
@@ -168,34 +168,29 @@ export default function Header() {
         </div>
       </div>
 
-      {/* Mobile Menu Overlay */}
+      {/* Mobile Menu */}
       <AnimatePresence>
         {isOpen && (
           <>
-            {/* Backdrop */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
               className="fixed inset-0 bg-black/80 backdrop-blur-sm z-40 md:hidden"
               onClick={() => setIsOpen(false)}
             />
-
-            {/* Menu Panel */}
             <motion.div
               initial={{ opacity: 0, x: '100%' }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed right-0 top-0 h-screen w-72 bg-gradient-to-b from-black via-teal-950/95 to-black/95 backdrop-blur-xl border-l border-teal-700/50 shadow-2xl z-50 md:hidden"
+              className="fixed right-0 top-0 h-screen w-72 bg-[#0A0A0A]/95 backdrop-blur-2xl border-l border-[#00F5FF]/10 shadow-2xl z-50 md:hidden"
             >
               <div className="flex flex-col h-full">
-                {/* Close Button */}
                 <div className="flex justify-end p-4">
                   <button
                     onClick={() => setIsOpen(false)}
-                    className="text-teal-400 hover:text-orange-400 p-2 rounded-lg hover:bg-teal-400/10 transition-all"
+                    className="text-[#00F5FF] p-2 rounded-lg hover:bg-[#00F5FF]/10 transition-all"
                     aria-label="Close menu"
                   >
                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -204,7 +199,6 @@ export default function Header() {
                   </button>
                 </div>
 
-                {/* Nav Links */}
                 <nav className="flex flex-col px-6 py-4 space-y-2 flex-1">
                   {navLinks.map((link, index) => {
                     const isActive = activeSection === link.section;
@@ -220,8 +214,8 @@ export default function Header() {
                           onClick={() => handleNavClick(link.section)}
                           className={`block px-4 py-3 rounded-lg text-base font-medium transition-all duration-300 ${
                             isActive
-                              ? 'bg-gradient-to-r from-teal-400/20 to-orange-400/20 text-teal-400 border-l-2 border-teal-400'
-                              : 'text-teal-200/80 hover:bg-teal-400/10 hover:text-teal-300'
+                              ? 'bg-[#00F5FF]/10 text-[#00F5FF] border-l-2 border-[#00F5FF]'
+                              : 'text-[#A3A3A3] hover:bg-[#00F5FF]/5 hover:text-[#F1F1F1]'
                           }`}
                         >
                           {link.label}
@@ -231,28 +225,14 @@ export default function Header() {
                   })}
                 </nav>
 
-                {/* Social Links at Bottom */}
-                <div className="px-6 py-4 border-t border-teal-700/50">
-                  <div className="flex items-center gap-4">
-                    <Link
-                      href={siteConfig.social.github}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-3 px-4 py-3 text-teal-300 hover:text-orange-400 hover:bg-teal-400/10 rounded-lg transition-all duration-300"
-                    >
-                      <GithubIcon className="w-5 h-5" />
-                      <span className="text-sm">GitHub</span>
-                    </Link>
-                    <Link
-                      href={siteConfig.social.linkedin}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-3 px-4 py-3 text-teal-300 hover:text-orange-400 hover:bg-teal-400/10 rounded-lg transition-all duration-300"
-                    >
-                      <LinkedInIcon className="w-5 h-5" />
-                      <span className="text-sm">LinkedIn</span>
-                    </Link>
-                  </div>
+                <div className="px-6 py-4 border-t border-[#00F5FF]/10">
+                  <Link
+                    href="#contact"
+                    onClick={() => { setIsOpen(false); handleNavClick('contact'); }}
+                    className="block w-full text-center px-6 py-3 border border-[#00F5FF] text-[#00F5FF] font-semibold rounded-lg hover:bg-[#00F5FF]/10 transition-all duration-300"
+                  >
+                    Hire Me
+                  </Link>
                 </div>
               </div>
             </motion.div>

@@ -1,145 +1,378 @@
 'use client';
 
-import { motion } from 'framer-motion';
-import { useState } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface Project {
+  id: number;
   title: string;
   url: string;
-  category: 'ai' | 'web' | 'tool';
   description: string;
   tech: string[];
+  screenshot: string;
+  category: 'ai' | 'web' | 'tool';
 }
 
 const projects: Project[] = [
-  { title: 'Growth Mindset App', url: 'https://mmaaz-497-growth-mindset-app-gfeevb.streamlit.app/', category: 'web', description: 'An app focused on developing and tracking growth mindset habits.', tech: ['Streamlit', 'Python', 'UI'] },
-  { title: 'CV Generator', url: 'https://dynamic-resume-builder-xi-orcin.vercel.app/', category: 'tool', description: 'Dynamic resume builder with customizable templates.', tech: ['Next.js', 'React', 'Vercel'] },
-  { title: 'Personal Library', url: 'https://rk-personallibrarymanager.streamlit.app/', category: 'web', description: 'Manage and organize your personal book library.', tech: ['Streamlit', 'Python', 'Database'] },
-  { title: 'Unit Convertor', url: 'https://mmaaz-497-unit-convertor-app-unit-convertor-sht9oj.streamlit.app/', category: 'tool', description: 'Convert between various units of measurement.', tech: ['Streamlit', 'Python', 'Math'] },
-  { title: 'Interactive Resume', url: 'https://static-interactive-resume-ochre-one.vercel.app/', category: 'web', description: 'An interactive digital resume experience.', tech: ['HTML', 'CSS', 'Vercel'] },
-  { title: 'Blog Website', url: 'https://blog-website-beige-psi.vercel.app/', category: 'web', description: 'A full-featured blog website for content sharing.', tech: ['Next.js', 'React', 'Sanity'] },
-  { title: 'Restaurant Website', url: 'https://quick-commerce-hackathon-zthw.vercel.app/', category: 'web', description: 'Quick commerce restaurant website with ordering.', tech: ['Next.js', 'Tailwind', 'Vercel'] },
-  { title: 'Password Strength Meter', url: 'https://mmaaz-497-password-strength-meter-password-generator-5nohxp.streamlit.app/', category: 'tool', description: 'Measure and generate secure passwords.', tech: ['Streamlit', 'Python', 'Security'] },
-  { title: 'Task Manager', url: 'https://task-manager-one-psi-50.vercel.app/', category: 'tool', description: 'Organize and manage your daily tasks efficiently.', tech: ['Next.js', 'React', 'Vercel'] },
-  { title: 'Random Joke Generator', url: 'https://mmaaz-497-random-joke-genrator-main-0mjngs.streamlit.app/', category: 'tool', description: 'Get entertained with random jokes on demand.', tech: ['Streamlit', 'Python', 'API'] },
-  { title: 'Planets Weight Calculator', url: 'https://mmaaz-497-time-zone-convertor-main-ossttg.streamlit.app/', category: 'tool', description: 'Calculate your weight on different planets.', tech: ['Streamlit', 'Python', 'Math'] },
-  { title: 'Time Zone Converter', url: 'https://mmaaz-497-time-zone-convertor-main-ossttg.streamlit.app/', category: 'tool', description: 'Convert time across different time zones.', tech: ['Streamlit', 'Python', 'Utils'] },
-  { title: 'Cafe Management System', url: 'https://mmaaz-497-cafe-managment-system-main-tkwitb.streamlit.app/', category: 'web', description: 'Complete cafe management and ordering system.', tech: ['Streamlit', 'Python', 'Database'] },
-  { title: 'Cooking Recipes AI Agent', url: 'https://mmaaz-497-cooking-recipies-ai-agent-main-owgks1.streamlit.app/', category: 'ai', description: 'AI-powered cooking recipe suggestions.', tech: ['AI', 'OpenAI', 'Streamlit'] },
-  { title: 'Agentic Essay Pilot', url: 'https://agentic-essay-pilot.vercel.app/', category: 'ai', description: 'AI agent for essay generation and assistance.', tech: ['AI', 'OpenAI', 'Next.js'] },
-  { title: 'Physical AI Humanoid & Robotics Textbook', url: 'https://physical-ai-humanoid-robotics-textb-vert.vercel.app/', category: 'ai', description: 'Educational platform for robotics and AI learning.', tech: ['AI', 'Next.js', 'Education'] },
-];
-
-const categories = [
-  { key: 'all', label: 'All' },
-  { key: 'ai', label: 'AI Projects' },
-  { key: 'web', label: 'Web Apps' },
-  { key: 'tool', label: 'Tools' },
-];
-
-const container = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: { staggerChildren: 0.1 },
+  {
+    id: 1,
+    title: 'Cooking Recipes AI Agent',
+    url: 'https://mmaaz-497-cooking-recipies-ai-agent-main-owgks1.streamlit.app/',
+    description: 'AI-powered cooking recipe suggestions based on ingredients and preferences.',
+    tech: ['AI', 'OpenAI', 'Streamlit'],
+    screenshot: '/project-screenshots/cooking-recipes-ai.jpg',
+    category: 'ai',
   },
-};
+  {
+    id: 2,
+    title: 'Agentic Essay Pilot',
+    url: 'https://agentic-essay-pilot.vercel.app/',
+    description: 'AI agent for essay generation and intelligent writing assistance.',
+    tech: ['AI Agent', 'OpenAI'],
+    screenshot: '/project-screenshots/agentic-essay-pilot.png',
+    category: 'ai',
+  },
+  {
+    id: 3,
+    title: 'CV Generator',
+    url: 'https://dynamic-resume-builder-xi-orcin.vercel.app/',
+    description: 'Dynamic resume builder with customizable templates and live preview.',
+    tech: ['React', 'Vercel'],
+    screenshot: '/project-screenshots/cv-generator.png',
+    category: 'tool',
+  },
+  {
+    id: 4,
+    title: 'Growth Mindset App',
+    url: 'https://mmaaz-497-growth-mindset-app-gfeevb.streamlit.app/',
+    description: 'An app focused on developing and tracking growth mindset habits.',
+    tech: ['Streamlit', 'Python'],
+    screenshot: '/project-screenshots/growth-mindset-app.jpg',
+    category: 'web',
+  },
+  {
+    id: 5,
+    title: 'Personal Library',
+    url: 'https://rk-personallibrarymanager.streamlit.app/',
+    description: 'Manage and organize your personal book library efficiently.',
+    tech: ['Streamlit', 'Python'],
+    screenshot: '/project-screenshots/personal-library.jpg',
+    category: 'web',
+  },
+  {
+    id: 6,
+    title: 'Blog Website',
+    url: 'https://blog-website-beige-psi.vercel.app/',
+    description: 'A full-featured blog website for content sharing and publishing.',
+    tech: ['React', 'Sanity'],
+    screenshot: '/project-screenshots/blog-website.png',
+    category: 'web',
+  },
+];
 
-const item = {
-  hidden: { opacity: 0, scale: 0.9 },
-  show: { opacity: 1, scale: 1 },
-};
+// Duplicate projects for infinite loop effect
+const extendedProjects = [...projects, ...projects];
 
 export default function Projects() {
-  const [activeCategory, setActiveCategory] = useState('all');
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+  const [visibleCount, setVisibleCount] = useState(4);
+  const carouselRef = useRef<HTMLDivElement>(null);
+  const autoPlayRef = useRef<NodeJS.Timeout | null>(null);
 
-  const filteredProjects = activeCategory === 'all'
-    ? projects
-    : projects.filter((p) => p.category === activeCategory);
+  // Update visible cards based on screen width
+  useEffect(() => {
+    const updateVisibleCount = () => {
+      if (window.innerWidth < 640) {
+        setVisibleCount(1);
+      } else if (window.innerWidth < 1024) {
+        setVisibleCount(2);
+      } else if (window.innerWidth < 1280) {
+        setVisibleCount(3);
+      } else {
+        setVisibleCount(4);
+      }
+    };
+
+    updateVisibleCount();
+    window.addEventListener('resize', updateVisibleCount);
+    return () => window.removeEventListener('resize', updateVisibleCount);
+  }, []);
+
+  const nextSlide = useCallback(() => {
+    setCurrentIndex((prevIndex) => {
+      const nextIndex = prevIndex + 1;
+      // Reset when we reach the end of the original set
+      if (nextIndex >= projects.length) {
+        return 0;
+      }
+      return nextIndex;
+    });
+  }, []);
+
+  const prevSlide = () => {
+    setCurrentIndex((prevIndex) => {
+      if (prevIndex <= 0) {
+        return projects.length - 1;
+      }
+      return prevIndex - 1;
+    });
+  };
+
+  const goToSlide = (index: number) => {
+    setCurrentIndex(index);
+  };
+
+  // Auto-play functionality
+  useEffect(() => {
+    if (!isPaused) {
+      autoPlayRef.current = setInterval(() => {
+        nextSlide();
+      }, 3000);
+    }
+
+    return () => {
+      if (autoPlayRef.current) {
+        clearInterval(autoPlayRef.current);
+      }
+    };
+  }, [isPaused, nextSlide]);
+
+  const cardWidth = 100 / visibleCount;
 
   return (
-    <section id="projects" className="px-6 py-20 bg-[#0a0a0a]">
-      <motion.h3
-        className="text-3xl md:text-5xl font-bold mb-8 text-center text-teal-400 drop-shadow-md"
-        initial={{ opacity: 0, y: -20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.6 }}
-      >
-        My Projects
-      </motion.h3>
-
-      {/* Category Filters */}
-      <div className="flex flex-wrap justify-center gap-4 mb-12">
-        {categories.map((cat) => (
-          <button
-            key={cat.key}
-            onClick={() => setActiveCategory(cat.key)}
-            className={`px-5 py-2 rounded-lg font-semibold transition-all duration-300 ${
-              activeCategory === cat.key
-                ? 'bg-orange-500 text-white shadow-lg shadow-orange-500/50'
-                : 'bg-teal-900 text-teal-300 hover:bg-teal-800'
-            }`}
-            aria-pressed={activeCategory === cat.key}
-          >
-            {cat.label}
-          </button>
-        ))}
+    <section id="projects" className="relative px-6 lg:px-12 py-24 bg-[#0A0A0A] overflow-hidden">
+      {/* Ambient Background Glow */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] bg-[#00F5FF]/5 rounded-full blur-[150px]" />
+        <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-[#00F5FF]/3 rounded-full blur-[120px]" />
       </div>
 
-      {/* Projects Grid */}
+      {/* Section Title */}
       <motion.div
-        className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8"
-        variants={container}
-        initial="hidden"
-        whileInView="show"
-        viewport={{ once: true, amount: 0.1 }}
-        key={activeCategory}
+        className="text-center mb-20 relative z-10"
+        initial={{ opacity: 0, y: -30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.8 }}
       >
-        {filteredProjects.map((project) => (
-          <motion.a
-            key={project.title}
-            href={project.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            variants={item}
-            className="bg-gradient-to-tr from-teal-900 to-black rounded-xl shadow-lg border border-teal-700 hover:shadow-orange-500/30 hover:bg-orange-900/20 transition-all duration-300 overflow-hidden group"
-            whileHover={{ y: -5 }}
-          >
-            {/* Placeholder Screenshot */}
-            <div className="w-full h-40 bg-gradient-to-br from-teal-800 to-teal-950 flex items-center justify-center relative overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-tr from-orange-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              <span className="text-5xl opacity-30">🖥️</span>
-              {/* Replace with actual screenshot: 
-                  <img src={`/screenshots/${project.title.toLowerCase().replace(/\s+/g, '-')}.png`} alt={project.title} className="w-full h-full object-cover" /> 
-              */}
-            </div>
-            
-            <div className="p-6">
-              <h4 className="text-xl font-semibold mb-2 text-orange-400 group-hover:text-orange-300 transition-colors">
-                {project.title}
-              </h4>
-              <p className="text-sm text-teal-200 mb-4">{project.description}</p>
-              
-              {/* Tech Stack Tags */}
-              <div className="flex flex-wrap gap-2 mb-4">
-                {project.tech.map((tech) => (
-                  <span
-                    key={tech}
-                    className="px-2 py-1 bg-teal-800/50 text-teal-300 text-xs rounded-full border border-teal-700/50"
-                  >
-                    {tech}
-                  </span>
-                ))}
-              </div>
-              
-              <span className="text-xs text-teal-400 underline group-hover:text-orange-400 transition-colors">
-                View Project →
-              </span>
-            </div>
-          </motion.a>
-        ))}
+        <span className="text-[#00F5FF] text-sm font-semibold uppercase tracking-[0.3em]">
+          Portfolio
+        </span>
+        <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-[#F1F1F1] mt-4 leading-tight">
+          Featured <span className="text-[#00F5FF] neon-glow">Projects</span>
+        </h2>
+        <div className="w-24 h-1 bg-gradient-to-r from-[#00F5FF] to-[#00BFFF] mx-auto mt-6 rounded-full" />
       </motion.div>
+
+      {/* Carousel Container */}
+      <div className="relative max-w-7xl mx-auto z-10">
+        {/* Navigation Arrows */}
+        <button
+          onClick={prevSlide}
+          className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 lg:-translate-x-16 z-30 w-12 h-12 rounded-full bg-[#1A1A1A] border border-[#00F5FF]/30 flex items-center justify-center group hover:bg-[#00F5FF]/10 transition-all duration-300 hover:shadow-[0_0_20px_rgba(0,245,255,0.3)]"
+          aria-label="Previous project"
+        >
+          <svg
+            className="w-6 h-6 text-[#00F5FF] group-hover:scale-110 transition-transform"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
+        </button>
+
+        <button
+          onClick={nextSlide}
+          className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 lg:translate-x-16 z-30 w-12 h-12 rounded-full bg-[#1A1A1A] border border-[#00F5FF]/30 flex items-center justify-center group hover:bg-[#00F5FF]/10 transition-all duration-300 hover:shadow-[0_0_20px_rgba(0,245,255,0.3)]"
+          aria-label="Next project"
+        >
+          <svg
+            className="w-6 h-6 text-[#00F5FF] group-hover:scale-110 transition-transform"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+
+        {/* Carousel Viewport */}
+        <div
+          ref={carouselRef}
+          className="overflow-hidden"
+          onMouseEnter={() => setIsPaused(true)}
+          onMouseLeave={() => setIsPaused(false)}
+        >
+          <motion.div
+            className="flex"
+            animate={{
+              x: `-${currentIndex * cardWidth}%`,
+            }}
+            transition={{
+              type: 'spring',
+              stiffness: 300,
+              damping: 30,
+            }}
+          >
+            {extendedProjects.map((project, index) => {
+              const isActive = index % projects.length === currentIndex;
+              const isAdjacent =
+                index % projects.length === (currentIndex + 1) % projects.length ||
+                index % projects.length === (currentIndex - 1 + projects.length) % projects.length;
+
+              return (
+                <div
+                  key={`${project.id}-${index}`}
+                  className="flex-shrink-0 px-3"
+                  style={{ width: `${cardWidth}%` }}
+                >
+                  <motion.a
+                    href={project.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`block rounded-xl overflow-hidden transition-all duration-500 ${
+                      isActive
+                        ? 'opacity-100 scale-100'
+                        : isAdjacent
+                        ? 'opacity-70 scale-95'
+                        : 'opacity-50 scale-90 blur-[1px]'
+                    }`}
+                    whileHover={{ y: -8, scale: 1.02 }}
+                  >
+                    {/* Card */}
+                    <div className="glass-card rounded-xl overflow-hidden group relative border border-[#00F5FF]/10 hover:border-[#00F5FF]/50 hover:shadow-[0_0_40px_rgba(0,245,255,0.2)] transition-all duration-500">
+                      {/* Screenshot Container */}
+                      <div className="relative w-full h-48 bg-gradient-to-br from-[#1A1A1A] to-[#0A0A0A] overflow-hidden">
+                        {/* Neon overlay */}
+                        <div className="absolute inset-0 bg-gradient-to-tr from-[#00F5FF]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10" />
+
+                        {/* External link icon */}
+                        <div className="absolute inset-0 flex items-center justify-center z-20 opacity-0 group-hover:opacity-100 transition-all duration-300">
+                          <div className="w-14 h-14 rounded-full bg-black/70 backdrop-blur-sm border border-[#00F5FF]/40 flex items-center justify-center">
+                            <svg
+                              className="w-6 h-6 text-[#00F5FF]"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                              />
+                            </svg>
+                          </div>
+                        </div>
+
+                        {/* Image */}
+                        <img
+                          src={project.screenshot}
+                          alt={`${project.title} screenshot`}
+                          className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-110"
+                          loading="lazy"
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            target.onerror = null;
+                            target.src = `data:image/svg+xml,${encodeURIComponent(
+                              `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400"><rect fill="#1A1A1A" width="600" height="400"/><text x="300" y="200" text-anchor="middle" font-size="48" fill="#00F5FF" opacity="0.3">${project.title.split(' ')[0]}</text></svg>`
+                            )}`;
+                          }}
+                        />
+                      </div>
+
+                      {/* Card Content */}
+                      <div className="p-5">
+                        <h3 className="text-lg font-bold text-[#F1F1F1] mb-2 group-hover:text-[#00F5FF] transition-colors duration-300">
+                          {project.title}
+                        </h3>
+                        <p className="text-sm text-[#A3A3A3] mb-4 leading-relaxed line-clamp-2">
+                          {project.description}
+                        </p>
+
+                        {/* Tech Stack Tags */}
+                        <div className="flex flex-wrap gap-2 mb-4">
+                          {project.tech.map((tech) => (
+                            <span
+                              key={tech}
+                              className="px-3 py-1.5 bg-[#00F5FF]/5 text-[#00F5FF] text-xs font-medium rounded-full border border-[#00F5FF]/20 hover:bg-[#00F5FF]/10 hover:border-[#00F5FF]/40 hover:shadow-[0_0_10px_rgba(0,245,255,0.2)] transition-all duration-300"
+                            >
+                              {tech}
+                            </span>
+                          ))}
+                        </div>
+
+                        {/* View Project Button */}
+                        <div className="inline-flex items-center gap-2 px-4 py-2 bg-transparent border border-[#00F5FF]/30 rounded-lg text-[#00F5FF] text-sm font-semibold group-hover:bg-[#00F5FF]/10 group-hover:border-[#00F5FF]/50 group-hover:shadow-[0_0_15px_rgba(0,245,255,0.3)] transition-all duration-300">
+                          <span>View Project</span>
+                          <svg
+                            className="w-4 h-4 group-hover:translate-x-1 transition-transform"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M17 8l4 4m0 0l-4 4m4-4H3"
+                            />
+                          </svg>
+                        </div>
+                      </div>
+                    </div>
+                  </motion.a>
+                </div>
+              );
+            })}
+          </motion.div>
+        </div>
+
+        {/* Navigation Dots */}
+        <div className="flex justify-center items-center gap-3 mt-12">
+          {projects.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => goToSlide(index)}
+              className={`transition-all duration-300 rounded-full ${
+                currentIndex === index
+                  ? 'w-8 h-2 bg-[#00F5FF] shadow-[0_0_10px_rgba(0,245,255,0.5)]'
+                  : 'w-2 h-2 bg-[#A3A3A3]/30 hover:bg-[#00F5FF]/50'
+              }`}
+              aria-label={`Go to project ${index + 1}`}
+              aria-current={currentIndex === index ? 'true' : 'false'}
+            />
+          ))}
+        </div>
+
+        {/* Auto-play Indicator */}
+        <div className="flex justify-center items-center gap-2 mt-4 text-xs text-[#A3A3A3]">
+          <div className={`flex gap-1 ${isPaused ? 'opacity-50' : 'opacity-100'}`}>
+            <motion.div
+              className="w-1 h-1 bg-[#00F5FF] rounded-full"
+              animate={{ opacity: [0.3, 1, 0.3] }}
+              transition={{ duration: 1.5, repeat: Infinity }}
+            />
+            <motion.div
+              className="w-1 h-1 bg-[#00F5FF] rounded-full"
+              animate={{ opacity: [0.3, 1, 0.3] }}
+              transition={{ duration: 1.5, repeat: Infinity, delay: 0.3 }}
+            />
+            <motion.div
+              className="w-1 h-1 bg-[#00F5FF] rounded-full"
+              animate={{ opacity: [0.3, 1, 0.3] }}
+              transition={{ duration: 1.5, repeat: Infinity, delay: 0.6 }}
+            />
+          </div>
+          <span>{isPaused ? 'Paused' : 'Auto-playing'}</span>
+        </div>
+      </div>
+
+      {/* Decorative Corner Elements */}
+      <div className="absolute top-20 left-10 w-20 h-20 border-l-2 border-t-2 border-[#00F5FF]/10 rounded-tl-lg pointer-events-none" />
+      <div className="absolute bottom-20 right-10 w-20 h-20 border-r-2 border-b-2 border-[#00F5FF]/10 rounded-br-lg pointer-events-none" />
     </section>
   );
 }

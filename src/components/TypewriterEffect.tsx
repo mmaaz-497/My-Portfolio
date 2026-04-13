@@ -11,7 +11,7 @@ interface TypewriterEffectProps {
 
 export default function TypewriterEffect({
   texts,
-  typingSpeed = 100,
+  typingSpeed = 80,
   deletingSpeed = 50,
   delayBetween = 2000,
 }: TypewriterEffectProps) {
@@ -25,19 +25,15 @@ export default function TypewriterEffect({
     const timeout = setTimeout(
       () => {
         if (!isDeleting) {
-          // Typing
           if (currentText.length < currentFullText.length) {
             setCurrentText(currentFullText.slice(0, currentText.length + 1));
           } else {
-            // Finished typing, wait then start deleting
             setTimeout(() => setIsDeleting(true), delayBetween);
           }
         } else {
-          // Deleting
           if (currentText.length > 0) {
             setCurrentText(currentText.slice(0, -1));
           } else {
-            // Finished deleting, move to next text
             setIsDeleting(false);
             setCurrentTextIndex((prevIndex) => (prevIndex + 1) % texts.length);
           }
@@ -50,9 +46,9 @@ export default function TypewriterEffect({
   }, [currentText, isDeleting, currentTextIndex, texts, typingSpeed, deletingSpeed, delayBetween]);
 
   return (
-    <span className="text-orange-400">
+    <span className="bg-gradient-to-r from-[#00F5FF] to-[#00BFFF] bg-clip-text text-transparent">
       {currentText}
-      <span className="animate-pulse">|</span>
+      <span className="animate-pulse text-[#00F5FF]">|</span>
     </span>
   );
 }

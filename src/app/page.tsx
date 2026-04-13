@@ -1,24 +1,18 @@
-import { Header, Hero, AboutMe, Skills, Projects, Contact, Footer, Testimonials, Experience, Services, Certifications, Blog, Newsletter, LoadingScreen, ThemeToggle } from '@/components';
+import { Header, Hero, AboutMe, Skills, Projects, Experience, Contact, Footer, LoadingScreen } from '@/components';
 import ScrollProgress from '@/components/ScrollProgress';
 import BackToTop from '@/components/BackToTop';
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-gradient-to-b from-gray-900 via-teal-900 to-black text-white font-sans">
+    <main className="min-h-screen bg-[#0A0A0A] text-[#F1F1F1] font-sans relative">
       <LoadingScreen />
       <ScrollProgress />
       <Header />
-      <ThemeToggle />
       <Hero />
       <AboutMe />
-      <Services />
       <Skills />
-      <Experience />
       <Projects />
-      <Certifications />
-      <Testimonials />
-      <Blog />
-      <Newsletter />
+      <Experience />
       <Contact />
       <Footer />
       <BackToTop />

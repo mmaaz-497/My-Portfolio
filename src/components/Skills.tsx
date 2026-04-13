@@ -1,146 +1,122 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { useState } from 'react';
 
-const skillCategories = [
-  {
-    name: 'Frontend',
-    skills: [
-      { name: 'HTML', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg' },
-      { name: 'CSS', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg' },
-      { name: 'JavaScript', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg' },
-      { name: 'TypeScript', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg' },
-      { name: 'React', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg' },
-      { name: 'Tailwind CSS', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tailwindcss/tailwindcss-original.svg' },
-      { name: 'Next.js', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg' },
-    ],
-  },
-  {
-    name: 'Backend & AI',
-    skills: [
-      { name: 'Node.js', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg' },
-      { name: 'Python', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg' },
-      { name: 'OpenAI', icon: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/OpenAI_Logo.svg/1200px-OpenAI_Logo.svg.png' },
-      { name: 'Streamlit', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/streamlit/streamlit-original.svg' },
-      { name: 'Sanity', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/sanity/sanity-original.svg' },
-      { name: 'Prompt Engineering', icon: '/prompt-engineering.svg' },
-    ],
-  },
-  {
-    name: 'Tools & Design',
-    skills: [
-      { name: 'Git & GitHub', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg' },
-      { name: 'Docker', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg' },
-      { name: 'Kubernetes', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/kubernetes/kubernetes-original.svg' },
-      { name: 'AWS', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/amazonwebservices/amazonwebservices-original-wordmark.svg' },
-      { name: 'Vercel', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vercel/vercel-original.svg' },
-      { name: 'Render', icon: 'https://avatars.githubusercontent.com/u/44513706?s=200&v=4' },
-      { name: 'Hugging Face', icon: 'https://huggingface.co/datasets/huggingface/brand-assets/resolve/main/hf-logo.svg' },
-      { name: 'Figma', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/figma/figma-original.svg' },
-    ],
-  },
+const skills = [
+  { name: 'React', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg' },
+  { name: 'Next.js', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg' },
+  { name: 'TypeScript', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg' },
+  { name: 'Tailwind CSS', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tailwindcss/tailwindcss-original.svg' },
+  { name: 'Node.js', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg' },
+  { name: 'Python', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg' },
+  { name: 'OpenAI', icon: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/OpenAI_Logo.svg/1200px-OpenAI_Logo.svg.png' },
+  { name: 'Streamlit', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/streamlit/streamlit-original.svg' },
+  { name: 'Docker', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg' },
+  { name: 'Kubernetes', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/kubernetes/kubernetes-original.svg' },
+  { name: 'AWS', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/amazonwebservices/amazonwebservices-original-wordmark.svg' },
+  { name: 'Vercel', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vercel/vercel-original.svg' },
+  { name: 'Figma', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/figma/figma-original.svg' },
+  { name: 'Hugging Face', icon: 'https://huggingface.co/datasets/huggingface/brand-assets/resolve/main/hf-logo.svg' },
+  { name: 'Git', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg' },
+  { name: 'Sanity', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/sanity/sanity-original.svg' },
 ];
 
-const categories = ['All', 'Frontend', 'Backend & AI', 'Tools & Design'];
-
-const container = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: { staggerChildren: 0.1 },
-  },
-};
-
-const item = {
-  hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0 },
-};
+// Duplicate for seamless infinite loop
+const duplicatedSkills = [...skills, ...skills, ...skills, ...skills];
 
 export default function Skills() {
-  const [activeCategory, setActiveCategory] = useState('All');
-
-  const filteredSkills = activeCategory === 'All'
-    ? skillCategories.flatMap((category) => category.skills)
-    : skillCategories.find((category) => category.name === activeCategory)?.skills || [];
-
   return (
-    <section id="skills" className="px-6 py-20 bg-gradient-to-b from-black via-teal-900 to-teal-950">
-      <motion.h3
-        className="text-3xl md:text-5xl font-bold mb-10 text-center text-teal-400 drop-shadow-md"
-        initial={{ opacity: 0, y: -20 }}
+    <section id="skills" className="relative px-6 lg:px-12 py-24 bg-[#0A0A0A] overflow-hidden">
+      {/* Subtle particle/grid background */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute inset-0 opacity-[0.03]"
+          style={{
+            backgroundImage: `
+              radial-gradient(circle at 25% 25%, rgba(0, 245, 255, 0.15) 0%, transparent 50%),
+              radial-gradient(circle at 75% 75%, rgba(0, 191, 255, 0.1) 0%, transparent 50%)
+            `
+          }}
+        />
+      </div>
+
+      {/* Section Title */}
+      <motion.div
+        className="text-center mb-20 relative z-10"
+        initial={{ opacity: 0, y: -30 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
-        transition={{ duration: 0.6 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
       >
-        My Skills
-      </motion.h3>
-
-      {/* Category Filters */}
-      <motion.div
-        className="flex flex-wrap justify-center gap-3 mb-10"
-        initial={{ opacity: 0, y: -10 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ delay: 0.2 }}
-      >
-        {categories.map((category) => (
-          <button
-            key={category}
-            onClick={() => setActiveCategory(category)}
-            className={`px-5 py-2 rounded-lg font-semibold transition-all duration-300 ${
-              activeCategory === category
-                ? 'bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-lg shadow-orange-500/50 scale-105'
-                : 'bg-teal-800 text-teal-300 hover:bg-teal-700 hover:text-white'
-            }`}
-          >
-            {category}
-          </button>
-        ))}
+        <h2 className="text-4xl md:text-6xl lg:text-7xl font-black text-[#F1F1F1] tracking-tight">
+          Skills & <span className="text-[#00F5FF]">Technologies</span>
+        </h2>
+        {/* Neon underline */}
+        <div className="mt-4 mx-auto w-32 h-1.5 bg-gradient-to-r from-[#00F5FF] via-[#00BFFF] to-[#00F5FF] rounded-full relative">
+          <div className="absolute inset-0 blur-md bg-[#00F5FF] opacity-50 rounded-full" />
+        </div>
+        <p className="mt-6 text-[#A3A3A3] text-lg max-w-2xl mx-auto">
+          Cutting-edge technologies I leverage to build exceptional digital experiences
+        </p>
       </motion.div>
 
-      {/* Skills Grid */}
-      <motion.div
-        key={activeCategory}
-        className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 text-center"
-        variants={container}
-        initial="hidden"
-        whileInView="show"
-        viewport={{ once: true, amount: 0.2 }}
-      >
-        {filteredSkills.map((skill) => (
-          <motion.div
-            key={skill.name}
-            variants={item}
-            className="bg-gradient-to-tr from-orange-500 to-orange-700 rounded-xl shadow-lg hover:shadow-orange-500/50 p-5 border border-orange-600 transition-all duration-300 cursor-pointer font-semibold hover:scale-105 hover:shadow-xl"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <div className="w-12 h-12 mx-auto mb-3 flex items-center justify-center bg-white/90 rounded-lg p-1">
-              <img
-                src={skill.icon}
-                alt={`${skill.name} logo`}
-                className="w-full h-full object-contain"
-                onError={(e) => {
-                  const target = e.target as HTMLImageElement;
-                  target.src = `data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">🤖</text></svg>`;
-                }}
-              />
-            </div>
-            <div className="text-sm font-semibold text-white drop-shadow-md">{skill.name}</div>
-          </motion.div>
-        ))}
-      </motion.div>
+      {/* Infinite Scrolling Marquee */}
+      <div className="relative z-10 max-w-7xl mx-auto">
+        {/* Gradient fade edges */}
+        <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-[#0A0A0A] to-transparent z-20 pointer-events-none" />
+        <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-[#0A0A0A] to-transparent z-20 pointer-events-none" />
 
-      <motion.p
-        className="text-center mt-8 text-teal-300 text-sm"
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
+        {/* Marquee track */}
+        <div className="relative overflow-hidden">
+          <div className="marquee-track flex gap-6">
+            {duplicatedSkills.map((skill, index) => (
+              <motion.div
+                key={`${skill.name}-${index}`}
+                className="flex-shrink-0 group"
+                whileHover={{ scale: 1.08 }}
+                transition={{ type: "spring", stiffness: 300, damping: 20 }}
+              >
+                <div className="glass-card rounded-2xl p-6 min-w-[140px] min-h-[140px] flex flex-col items-center justify-center gap-3 transition-all duration-300 cursor-pointer relative overflow-hidden group hover:border-[#00F5FF]/40 hover:shadow-[0_0_30px_rgba(0,245,255,0.2)]">
+                  {/* Hover glow effect */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#00F5FF]/0 to-[#00F5FF]/0 group-hover:from-[#00F5FF]/5 group-hover:to-transparent transition-all duration-500" />
+                  
+                  {/* Icon */}
+                  <div className="relative w-16 h-16 flex items-center justify-center bg-[#0A0A0A] rounded-xl p-3 transition-all duration-300 group-hover:bg-[#00F5FF]/10 group-hover:shadow-[0_0_15px_rgba(0,245,255,0.3)]">
+                    <img
+                      src={skill.icon}
+                      alt={`${skill.name} logo`}
+                      className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-110"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.style.display = 'none';
+                        target.parentElement!.innerHTML = `<span class="text-3xl">⚡</span>`;
+                      }}
+                    />
+                  </div>
+                  
+                  {/* Label */}
+                  <span className="text-sm font-semibold text-[#F1F1F1] group-hover:text-[#00F5FF] transition-colors duration-300 relative z-10">
+                    {skill.name}
+                  </span>
+
+                  {/* Motion blur effect on hover */}
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
+                    <div className="absolute inset-0 bg-[#00F5FF]/5 blur-xl" />
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Bottom accent line */}
+      <motion.div
+        className="mt-20 mx-auto max-w-4xl h-px bg-gradient-to-r from-transparent via-[#00F5FF]/30 to-transparent"
+        initial={{ scaleX: 0 }}
+        whileInView={{ scaleX: 1 }}
         viewport={{ once: true }}
-        transition={{ delay: 0.5 }}
-      >
-        I specialize in programming languages with practical experience in user interface design and managing data workflows.
-      </motion.p>
+        transition={{ duration: 1, delay: 0.3 }}
+      />
     </section>
   );
 }
