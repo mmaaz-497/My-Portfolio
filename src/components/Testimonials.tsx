@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const testimonials = [
@@ -88,16 +88,39 @@ const testimonials = [
 ];
 
 const cardsVisible = 3;
-const cardWidthPercent = 100 / cardsVisible;
+
+function getCardsPerView() {
+  if (typeof window === 'undefined') return 3;
+  if (window.innerWidth < 640) return 1;
+  if (window.innerWidth < 1024) return 2;
+  return 3;
+}
+
+function getGapPercent() {
+  if (typeof window === 'undefined') return 4;
+  if (window.innerWidth < 640) return 4;
+  return 5;
+}
 
 export default function Testimonials() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showNav, setShowNav] = useState(false);
+  const [cardsPerView, setCardsPerView] = useState(3);
+  const [gapPx, setGapPx] = useState(20);
 
-  // Duplicate testimonials for infinite loop illusion
+  useEffect(() => {
+    const update = () => {
+      const cpv = getCardsPerView();
+      setCardsPerView(cpv);
+      setGapPx(cpv === 1 ? 16 : 20);
+    };
+    update();
+    window.addEventListener('resize', update);
+    return () => window.removeEventListener('resize', update);
+  }, []);
+
   const extended = [...testimonials, ...testimonials];
-
-  const maxIndex = extended.length - cardsVisible;
+  const maxIndex = Math.max(0, extended.length - cardsPerView);
 
   const nextSlide = useCallback(() => {
     setCurrentIndex((prev) => (prev >= maxIndex ? 0 : prev + 1));
@@ -107,13 +130,14 @@ export default function Testimonials() {
     setCurrentIndex((prev) => (prev <= 0 ? maxIndex : prev - 1));
   }, [maxIndex]);
 
-  const handleInteraction = () => {
-    setShowNav(true);
-  };
+  const handleInteraction = () => setShowNav(true);
 
   const goToSlide = (index: number) => {
     setCurrentIndex(Math.min(index, maxIndex));
   };
+
+  const cardWidth = 100 / cardsPerView;
+  const slideOffset = currentIndex * (cardWidth + (gapPx * cardsPerView) / 100);
 
   return (
     <section
@@ -161,10 +185,9 @@ export default function Testimonials() {
         {/* Cards Viewport */}
         <div className="overflow-hidden rounded-2xl">
           <motion.div
-            className="flex gap-5"
-            animate={{
-              x: `-${currentIndex * (100 / cardsVisible + 20 / cardsVisible)}%`,
-            }}
+            className="flex"
+            style={{ gap: `${gapPx}px` }}
+            animate={{ x: `-${slideOffset}%` }}
             transition={{ duration: 0.5, ease: 'easeInOut' }}
           >
             {extended.map((testimonial, idx) => (
@@ -172,7 +195,7 @@ export default function Testimonials() {
                 key={`${testimonial.id}-${idx}`}
                 className="flex-shrink-0 rounded-xl p-6 transition-all duration-300 hover:-translate-y-1 flex flex-col"
                 style={{
-                  width: `${cardWidthPercent}%`,
+                  width: `${cardWidth}%`,
                   minHeight: '240px',
                   background: '#FFFFFF',
                   boxShadow: '0 4px 24px rgba(0,0,0,0.3), 0 0 0 1px rgba(0,245,255,0.08)',
