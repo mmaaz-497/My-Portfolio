@@ -17,6 +17,13 @@ const LinkedInIcon = () => (
   </svg>
 );
 
+const EmailIcon = () => (
+  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <rect x="2" y="4" width="20" height="16" rx="2" />
+    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+  </svg>
+);
+
 export default function Contact() {
   const [formData, setFormData] = useState({
     name: '',
@@ -196,8 +203,8 @@ export default function Contact() {
             href={`mailto:${siteConfig.email}`}
             className="flex items-center gap-2 text-[#A3A3A3] hover:text-[#00F5FF] transition-colors group"
           >
-            <span className="w-10 h-10 rounded-lg bg-[#1A1A1A] border border-[#00F5FF]/10 flex items-center justify-center group-hover:border-[#00F5FF]/30 transition-colors">
-              📧
+            <span className="w-10 h-10 rounded-lg bg-[#1A1A1A] border border-[#00F5FF]/10 flex items-center justify-center group-hover:border-[#00F5FF]/30 transition-colors text-[#00F5FF]">
+              <EmailIcon />
             </span>
             <span className="text-sm font-medium">{siteConfig.email}</span>
           </Link>
