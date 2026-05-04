@@ -15,6 +15,51 @@ interface Project {
 
 const projects: Project[] = [
   {
+    id: 7,
+    title: 'ZaraatAI',
+    url: 'https://crop-disease-detector-topaz.vercel.app/',
+    description: 'AI-powered web app that detects crop diseases from leaf photos using GPT-4 Vision — returns disease name, severity, treatment steps, and medicine recommendations in both Urdu and English.',
+    tech: ['Next.js 14', 'TypeScript', 'GPT-4 Vision', 'OpenAI Agents SDK', 'GSAP', 'jsPDF'],
+    screenshot: 'https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=600&h=400&fit=crop&q=80',
+    category: 'ai',
+  },
+  {
+    id: 8,
+    title: 'Physical AI Humanoid Robotics Book',
+    url: 'https://physical-ai-humanoid-robotics-textb-vert.vercel.app/',
+    description: 'An interactive digital textbook on humanoid robotics, powered by a RAG-based AI chatbot that answers your questions directly from the book\'s content.',
+    tech: ['Next.js', 'RAG', 'OpenAI', 'OpenAI Agents SDK', 'MCP Tools'],
+    screenshot: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=600&h=400&fit=crop&q=80',
+    category: 'ai',
+  },
+  {
+    id: 9,
+    title: 'Todo App with Reminder',
+    url: 'https://todo-full-stack-web-application-self.vercel.app/',
+    description: 'A full-stack todo application with smart reminders to keep you on track — never miss a deadline or forget an important task again.',
+    tech: ['Next.js', 'PostgreSQL', 'OpenAI', 'Tailwind CSS', 'TypeScript', 'Auth'],
+    screenshot: '/project-screenshots/todo-app-reminder.jpg',
+    category: 'tool',
+  },
+  {
+    id: 10,
+    title: 'Restaurant Website',
+    url: 'https://quick-commerce-hackathon-zthw.vercel.app/',
+    description: 'A modern, visually rich restaurant website featuring menu browsing, online ordering, and a seamless user experience built for speed and style.',
+    tech: ['Next.js', 'Stripe', 'Sanity', 'TailwindCSS', 'TypeScript'],
+    screenshot: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600&h=400&fit=crop&q=80',
+    category: 'web',
+  },
+  {
+    id: 11,
+    title: 'Task Manager App',
+    url: 'https://task-manager-one-psi-50.vercel.app/',
+    description: 'A minimal yet powerful daily task manager to organize your day, set priorities, and track progress — built for focus and productivity.',
+    tech: ['Next.js', 'TailwindCSS', 'TypeScript'],
+    screenshot: 'https://images.unsplash.com/photo-1507925921958-8a62f3d1a50d?w=600&h=400&fit=crop&q=80',
+    category: 'tool',
+  },
+  {
     id: 1,
     title: 'Cooking Recipes AI Agent',
     url: 'https://mmaaz-497-cooking-recipies-ai-agent-main-owgks1.streamlit.app/',
@@ -28,7 +73,7 @@ const projects: Project[] = [
     title: 'Agentic Essay Pilot',
     url: 'https://agentic-essay-pilot.vercel.app/',
     description: 'AI agent for essay generation and intelligent writing assistance.',
-    tech: ['AI Agent', 'OpenAI'],
+    tech: ['OpenAI Agents SDK', 'OpenAI', 'ChatKit'],
     screenshot: '/project-screenshots/agentic-essay-pilot.png',
     category: 'ai',
   },
@@ -37,7 +82,7 @@ const projects: Project[] = [
     title: 'CV Generator',
     url: 'https://dynamic-resume-builder-xi-orcin.vercel.app/',
     description: 'Dynamic resume builder with customizable templates and live preview.',
-    tech: ['React', 'Vercel'],
+    tech: ['HTML', 'CSS', 'JavaScript'],
     screenshot: '/project-screenshots/cv-generator.png',
     category: 'tool',
   },
@@ -64,7 +109,7 @@ const projects: Project[] = [
     title: 'Blog Website',
     url: 'https://blog-website-beige-psi.vercel.app/',
     description: 'A full-featured blog website for content sharing and publishing.',
-    tech: ['React', 'Sanity'],
+    tech: ['Next.js', 'Sanity'],
     screenshot: '/project-screenshots/blog-website.png',
     category: 'web',
   },
@@ -166,11 +211,11 @@ export default function Projects() {
       </motion.div>
 
       {/* Carousel Container */}
-      <div className="relative max-w-7xl mx-auto z-10">
+      <div className="relative max-w-7xl mx-auto z-10 px-14 lg:px-16">
         {/* Navigation Arrows */}
         <button
           onClick={prevSlide}
-          className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 lg:-translate-x-16 z-30 w-12 h-12 rounded-full bg-[#1A1A1A] border border-[#00F5FF]/30 flex items-center justify-center group hover:bg-[#00F5FF]/10 transition-all duration-300 hover:shadow-[0_0_20px_rgba(0,245,255,0.3)]"
+          className="absolute left-0 top-1/2 -translate-y-1/2 z-30 w-12 h-12 rounded-full bg-[#1A1A1A] border border-[#00F5FF]/30 flex items-center justify-center group hover:bg-[#00F5FF]/10 transition-all duration-300 hover:shadow-[0_0_20px_rgba(0,245,255,0.3)]"
           aria-label="Previous project"
         >
           <svg
@@ -185,7 +230,7 @@ export default function Projects() {
 
         <button
           onClick={nextSlide}
-          className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 lg:translate-x-16 z-30 w-12 h-12 rounded-full bg-[#1A1A1A] border border-[#00F5FF]/30 flex items-center justify-center group hover:bg-[#00F5FF]/10 transition-all duration-300 hover:shadow-[0_0_20px_rgba(0,245,255,0.3)]"
+          className="absolute right-0 top-1/2 -translate-y-1/2 z-30 w-12 h-12 rounded-full bg-[#1A1A1A] border border-[#00F5FF]/30 flex items-center justify-center group hover:bg-[#00F5FF]/10 transition-all duration-300 hover:shadow-[0_0_20px_rgba(0,245,255,0.3)]"
           aria-label="Next project"
         >
           <svg
