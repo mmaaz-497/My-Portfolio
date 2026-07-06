@@ -18,8 +18,19 @@ export default function TypewriterEffect({
   const [currentTextIndex, setCurrentTextIndex] = useState(0);
   const [currentText, setCurrentText] = useState('');
   const [isDeleting, setIsDeleting] = useState(false);
+  const [reducedMotion, setReducedMotion] = useState(false);
 
   useEffect(() => {
+    setReducedMotion(window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  }, []);
+
+  useEffect(() => {
+    // Respect the user's reduce-motion preference: show the first title statically
+    if (reducedMotion) {
+      setCurrentText(texts[0]);
+      return;
+    }
+
     const currentFullText = texts[currentTextIndex];
 
     const timeout = setTimeout(
@@ -43,12 +54,12 @@ export default function TypewriterEffect({
     );
 
     return () => clearTimeout(timeout);
-  }, [currentText, isDeleting, currentTextIndex, texts, typingSpeed, deletingSpeed, delayBetween]);
+  }, [currentText, isDeleting, currentTextIndex, texts, typingSpeed, deletingSpeed, delayBetween, reducedMotion]);
 
   return (
     <span className="bg-gradient-to-r from-[#00F5FF] to-[#00BFFF] bg-clip-text text-transparent">
       {currentText}
-      <span className="animate-pulse text-[#00F5FF]">|</span>
+      <span className="animate-pulse motion-reduce:animate-none text-[#00F5FF]">|</span>
     </span>
   );
 }

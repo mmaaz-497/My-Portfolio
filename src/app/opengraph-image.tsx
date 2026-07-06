@@ -1,5 +1,7 @@
 import { ImageResponse } from 'next/og';
 
+export const alt = 'Muhammad Maaz — Agentic AI & Full-Stack Developer';
+
 export const size = {
   width: 1200,
   height: 630,
@@ -98,6 +100,8 @@ export default function Image() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', maxWidth: '650px' }}>
             <div
               style={{
+                display: 'flex',
+                flexDirection: 'column',
                 fontSize: '72px',
                 fontWeight: '800',
                 lineHeight: '1.1',
@@ -105,17 +109,8 @@ export default function Image() {
                 letterSpacing: '-2px',
               }}
             >
-              Hi, I'm
-              <br />
-              <span
-                style={{
-                  background: 'linear-gradient(135deg, #00F5FF, #00BFFF)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                }}
-              >
-                Muhammad Maaz
-              </span>
+              <span>Hi, I&apos;m</span>
+              <span style={{ color: '#00F5FF' }}>Muhammad Maaz</span>
             </div>
 
             <div

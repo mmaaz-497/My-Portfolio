@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Script from "next/script";
 import { siteConfig } from "@/config/site";
+import MotionProvider from "@/components/MotionProvider";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -24,14 +25,6 @@ export const metadata: Metadata = {
     description: siteConfig.description,
     url: siteConfig.url,
     siteName: `${siteConfig.name} Portfolio`,
-    images: [
-      {
-        url: `${siteConfig.url}/og-image.png`,
-        width: 1200,
-        height: 630,
-        alt: siteConfig.title,
-      },
-    ],
     locale: "en_US",
     type: "website",
   },
@@ -39,7 +32,6 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: siteConfig.title,
     description: siteConfig.description,
-    images: [`${siteConfig.url}/og-image.png`],
   },
   robots: {
     index: true,
@@ -104,7 +96,7 @@ export default function RootLayout({
           `}
         </Script>
         */}
-        {children}
+        <MotionProvider>{children}</MotionProvider>
       </body>
     </html>
   );

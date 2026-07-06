@@ -20,6 +20,13 @@ function Counter({ end, duration = 2000, suffix = '', label }: CounterProps) {
       ([entry]) => {
         if (entry.isIntersecting && !hasAnimated) {
           setHasAnimated(true);
+
+          // Respect the user's reduce-motion preference: show final value instantly
+          if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            setCount(end);
+            return;
+          }
+
           let startTime: number;
           let animationFrame: number;
 
@@ -70,10 +77,10 @@ export default function AnimatedCounters() {
       viewport={{ once: true }}
       transition={{ duration: 0.6 }}
     >
-      <Counter end={15} suffix="+" label="Projects Completed" />
-      <Counter end={15} suffix="+" label="Technologies" />
-      <Counter end={1000} suffix="+" label="Lines of Code" />
-      <Counter end={100} suffix="%" label="Commitment" />
+      <Counter end={15} suffix="+" label="Projects Shipped" />
+      <Counter end={10} suffix="+" label="AI Agents Built" />
+      <Counter end={16} suffix="+" label="Technologies" />
+      <Counter end={100} suffix="%" label="Client Focus" />
     </motion.div>
   );
 }

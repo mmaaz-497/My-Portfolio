@@ -20,7 +20,7 @@ const projects: Project[] = [
     url: 'https://crop-disease-detector-topaz.vercel.app/',
     description: 'AI-powered web app that detects crop diseases from leaf photos using GPT-4 Vision — returns disease name, severity, treatment steps, and medicine recommendations in both Urdu and English.',
     tech: ['Next.js 14', 'TypeScript', 'GPT-4 Vision', 'OpenAI Agents SDK', 'GSAP', 'jsPDF'],
-    screenshot: 'https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=600&h=400&fit=crop&q=80',
+    screenshot: '/project-screenshots/zaraat-ai.png',
     category: 'ai',
   },
   {
@@ -29,7 +29,7 @@ const projects: Project[] = [
     url: 'https://physical-ai-humanoid-robotics-textb-vert.vercel.app/',
     description: 'An interactive digital textbook on humanoid robotics, powered by a RAG-based AI chatbot that answers your questions directly from the book\'s content.',
     tech: ['Next.js', 'RAG', 'OpenAI', 'OpenAI Agents SDK', 'MCP Tools'],
-    screenshot: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=600&h=400&fit=crop&q=80',
+    screenshot: '/project-screenshots/physical-ai-robotics-book.png',
     category: 'ai',
   },
   {
@@ -47,7 +47,7 @@ const projects: Project[] = [
     url: 'https://quick-commerce-hackathon-zthw.vercel.app/',
     description: 'A modern, visually rich restaurant website featuring menu browsing, online ordering, and a seamless user experience built for speed and style.',
     tech: ['Next.js', 'Stripe', 'Sanity', 'TailwindCSS', 'TypeScript'],
-    screenshot: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600&h=400&fit=crop&q=80',
+    screenshot: '/project-screenshots/restaurant-website-new.png',
     category: 'web',
   },
   {
@@ -56,7 +56,7 @@ const projects: Project[] = [
     url: 'https://task-manager-one-psi-50.vercel.app/',
     description: 'A minimal yet powerful daily task manager to organize your day, set priorities, and track progress — built for focus and productivity.',
     tech: ['Next.js', 'TailwindCSS', 'TypeScript'],
-    screenshot: 'https://images.unsplash.com/photo-1507925921958-8a62f3d1a50d?w=600&h=400&fit=crop&q=80',
+    screenshot: '/project-screenshots/task-manager-new.png',
     category: 'tool',
   },
   {

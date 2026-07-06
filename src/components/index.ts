@@ -16,5 +16,5 @@ export { default as Certifications } from './Certifications';
 export { default as Blog } from './Blog';
 export { default as Newsletter } from './Newsletter';
 export { default as ParticlesBackground } from './ParticlesBackground';
-export { default as LoadingScreen } from './LoadingScreen';
 export { default as ThemeToggle } from './ThemeToggle';
+export { default as MotionProvider } from './MotionProvider';

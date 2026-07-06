@@ -44,7 +44,9 @@ export default function ParticlesBackground() {
       });
     }
 
-    const animate = () => {
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const drawFrame = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       particles.forEach((particle, i) => {
@@ -76,14 +78,25 @@ export default function ParticlesBackground() {
           }
         });
       });
+    };
 
+    const animate = () => {
+      drawFrame();
       animationFrameId = requestAnimationFrame(animate);
     };
 
-    animate();
+    // Respect the user's reduce-motion preference: draw one static frame
+    if (reducedMotion) {
+      drawFrame();
+      // Resizing clears the canvas, so redraw the static frame after it
+      window.addEventListener('resize', drawFrame);
+    } else {
+      animate();
+    }
 
     return () => {
       window.removeEventListener('resize', resize);
+      window.removeEventListener('resize', drawFrame);
       cancelAnimationFrame(animationFrameId);
     };
   }, []);

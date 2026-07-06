@@ -4,31 +4,31 @@ import { motion } from 'framer-motion';
 
 const experiences = [
   {
-    year: '2025 - 2026',
-    title: 'Senior Agentic AI Developer',
-    company: 'Freelance / Independent',
-    description: 'Building advanced AI agents and automation solutions using OpenAI Agents SDK, Python, and cutting-edge AI frameworks. Leading complex AI integration projects.',
+    year: '2026 - Present',
+    title: 'Agentic AI Developer',
+    company: 'DigiCop Solutions',
+    description: 'Developing AI automation solutions and intelligent AI agents for real-world business workflows. Building RAG pipelines, implementing Spec-Driven Development practices, integrating LLMs with enterprise systems, and creating scalable AI-powered applications using modern AI frameworks and tools.',
     icon: '🤖',
   },
   {
-    year: '2024 - 2025',
-    title: 'Full-Stack AI Developer',
-    company: 'Various Projects',
-    description: 'Developed scalable web applications with integrated AI features using Next.js, React, Node.js, and advanced LLM implementations.',
-    icon: '💻',
-  },
-  {
-    year: '2023 - 2024',
-    title: 'AI & Machine Learning Specialist',
-    company: 'Self-Directed Learning',
-    description: 'Deep expertise in AI, ML, LLMs, and agentic workflows. Built multiple production-ready AI applications and intelligent chatbots.',
+    year: '2024 - 2026 (Ongoing)',
+    title: 'AI & Web 3.0 Program',
+    company: 'GIAIC (Governor Sindh Initiative)',
+    description: 'Ongoing training in Agentic AI, Python, TypeScript, and the OpenAI Agents SDK — shipping production-ready AI applications and full-stack projects as part of the coursework.',
     icon: '🧠',
   },
   {
-    year: '2022 - 2023',
-    title: 'Full-Stack Development Journey',
-    company: 'Skill Building',
-    description: 'Mastered React, TypeScript, Tailwind CSS, and modern frontend/backend frameworks. Built comprehensive portfolio of projects.',
+    year: '2023 - 2024',
+    title: 'Full-Stack Web Development',
+    company: 'Projects & Coursework',
+    description: 'Built responsive web apps with Next.js, React, TypeScript, and Tailwind CSS — integrating Sanity, Stripe, and PostgreSQL across e-commerce, blog, and productivity projects.',
+    icon: '💻',
+  },
+  {
+    year: '2023',
+    title: 'Programming Foundations',
+    company: 'Self-Taught',
+    description: 'Started with HTML, CSS, JavaScript, and Python — building small tools and Streamlit apps that grew into a full portfolio of shipped projects.',
     icon: '🎨',
   },
 ];
@@ -64,7 +64,7 @@ export default function Experience() {
             viewport={{ once: true }}
             transition={{ delay: index * 0.15, duration: 0.5 }}
             className={`relative mb-16 md:mb-24 ${
-              index % 2 === 0 ? 'md:pr-[calc(50%+2rem)] md:text-right' : 'md:pl-[calc(50%+2rem)] md:ml-auto'
+              index % 2 === 0 ? 'md:pr-[calc(50%+2rem)]' : 'md:pl-[calc(50%+2rem)] md:ml-auto'
             }`}
           >
             {/* Timeline Dot */}
@@ -73,7 +73,7 @@ export default function Experience() {
             </div>
 
             {/* Content Card */}
-            <div className="ml-16 md:ml-0 glass-card rounded-xl p-6 hover:border-[#00F5FF]/30 transition-all duration-300">
+            <div className="ml-16 md:ml-0 glass-card rounded-xl p-6 hover:border-[#00F5FF]/30 hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(0,245,255,0.08)] motion-reduce:transform-none transition-all duration-300">
               <span className="inline-block px-4 py-1.5 bg-[#00F5FF]/10 text-[#00F5FF] text-xs font-bold uppercase tracking-wider rounded-full mb-3">
                 {exp.year}
               </span>
