@@ -1,4 +1,4 @@
-import { Header, Hero, AboutMe, Skills, Projects, Experience, Contact, Footer } from '@/components';
+import { Header, Hero, AboutMe, Skills, Projects, Experience, Certifications, Contact, Footer } from '@/components';
 import ScrollProgress from '@/components/ScrollProgress';
 import BackToTop from '@/components/BackToTop';
 
@@ -12,6 +12,7 @@ export default function Home() {
       <Skills />
       <Projects />
       <Experience />
+      <Certifications />
       <Contact />
       <Footer />
       <BackToTop />

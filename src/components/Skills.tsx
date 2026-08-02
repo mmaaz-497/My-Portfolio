@@ -9,7 +9,7 @@ const skills = [
   { name: 'Tailwind CSS', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tailwindcss/tailwindcss-original.svg' },
   { name: 'Node.js', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg' },
   { name: 'Python', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg' },
-  { name: 'OpenAI', icon: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/OpenAI_Logo.svg/1200px-OpenAI_Logo.svg.png' },
+  { name: 'OpenAI', icon: '/skill-icons/openai.svg' },
   { name: 'Streamlit', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/streamlit/streamlit-original.svg' },
   { name: 'Docker', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg' },
   { name: 'Kubernetes', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/kubernetes/kubernetes-original.svg' },
@@ -21,8 +21,9 @@ const skills = [
   { name: 'Sanity', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/sanity/sanity-original.svg' },
 ];
 
-// Duplicate for seamless infinite loop
-const duplicatedSkills = [...skills, ...skills, ...skills, ...skills];
+// The track renders this set twice; the marquee keyframe shifts it by exactly
+// one set, so the second set takes the first set's place for a seamless loop.
+const marqueeSets = [0, 1];
 
 export default function Skills() {
   return (
@@ -68,42 +69,50 @@ export default function Skills() {
         {/* Marquee track */}
         <div className="relative overflow-hidden">
           <div className="marquee-track flex gap-6">
-            {duplicatedSkills.map((skill, index) => (
-              <motion.div
-                key={`${skill.name}-${index}`}
-                className="flex-shrink-0 group"
-                whileHover={{ scale: 1.08 }}
-                transition={{ type: "spring", stiffness: 300, damping: 20 }}
+            {marqueeSets.map((set) => (
+              <div
+                key={set}
+                className="flex flex-shrink-0 gap-6"
+                aria-hidden={set === 1 ? true : undefined}
               >
-                <div className="glass-card rounded-2xl p-6 min-w-[140px] min-h-[140px] flex flex-col items-center justify-center gap-3 transition-all duration-300 cursor-pointer relative overflow-hidden group hover:border-[#00F5FF]/40 hover:shadow-[0_0_30px_rgba(0,245,255,0.2)]">
-                  {/* Hover glow effect */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-[#00F5FF]/0 to-[#00F5FF]/0 group-hover:from-[#00F5FF]/5 group-hover:to-transparent transition-all duration-500" />
+                {skills.map((skill) => (
+                  <motion.div
+                    key={`${skill.name}-${set}`}
+                    className="flex-shrink-0 group"
+                    whileHover={{ scale: 1.08 }}
+                    transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                  >
+                    <div className="glass-card rounded-2xl p-6 min-w-[140px] min-h-[140px] flex flex-col items-center justify-center gap-3 transition-all duration-300 cursor-pointer relative overflow-hidden group hover:border-[#00F5FF]/40 hover:shadow-[0_0_30px_rgba(0,245,255,0.2)]">
+                      {/* Hover glow effect */}
+                      <div className="absolute inset-0 bg-gradient-to-br from-[#00F5FF]/0 to-[#00F5FF]/0 group-hover:from-[#00F5FF]/5 group-hover:to-transparent transition-all duration-500" />
                   
-                  {/* Icon */}
-                  <div className="relative w-16 h-16 flex items-center justify-center bg-[#0A0A0A] rounded-xl p-3 transition-all duration-300 group-hover:bg-[#00F5FF]/10 group-hover:shadow-[0_0_15px_rgba(0,245,255,0.3)]">
-                    <img
-                      src={skill.icon}
-                      alt={`${skill.name} logo`}
-                      className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-110"
-                      onError={(e) => {
-                        const target = e.target as HTMLImageElement;
-                        target.style.display = 'none';
-                        target.parentElement!.innerHTML = `<span class="text-3xl">⚡</span>`;
-                      }}
-                    />
-                  </div>
+                      {/* Icon */}
+                      <div className="relative w-16 h-16 flex items-center justify-center bg-[#0A0A0A] rounded-xl p-3 transition-all duration-300 group-hover:bg-[#00F5FF]/10 group-hover:shadow-[0_0_15px_rgba(0,245,255,0.3)]">
+                        <img
+                          src={skill.icon}
+                          alt={`${skill.name} logo`}
+                          className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-110"
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            target.style.display = 'none';
+                            target.parentElement!.innerHTML = `<span class="text-3xl">⚡</span>`;
+                          }}
+                        />
+                      </div>
                   
-                  {/* Label */}
-                  <span className="text-sm font-semibold text-[#F1F1F1] group-hover:text-[#00F5FF] transition-colors duration-300 relative z-10">
-                    {skill.name}
-                  </span>
+                      {/* Label */}
+                      <span className="text-sm font-semibold text-[#F1F1F1] group-hover:text-[#00F5FF] transition-colors duration-300 relative z-10">
+                        {skill.name}
+                      </span>
 
-                  {/* Motion blur effect on hover */}
-                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
-                    <div className="absolute inset-0 bg-[#00F5FF]/5 blur-xl" />
-                  </div>
-                </div>
-              </motion.div>
+                      {/* Motion blur effect on hover */}
+                      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
+                        <div className="absolute inset-0 bg-[#00F5FF]/5 blur-xl" />
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
             ))}
           </div>
         </div>

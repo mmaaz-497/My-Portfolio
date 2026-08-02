@@ -11,6 +11,7 @@ const navLinks = [
   { href: '#skills', label: 'Skills', section: 'skills' },
   { href: '#projects', label: 'Projects', section: 'projects' },
   { href: '#experience', label: 'Experience', section: 'experience' },
+  { href: '#certifications', label: 'Certificates', section: 'certifications' },
   { href: '#contact', label: 'Contact', section: 'contact' },
 ];
 
@@ -35,7 +36,7 @@ export default function Header() {
     const handleScroll = () => {
       setScrolled(window.scrollY > 50);
 
-      const sections = ['hero', 'about', 'skills', 'projects', 'experience', 'contact'];
+      const sections = ['hero', 'about', 'skills', 'projects', 'experience', 'certifications', 'contact'];
       const scrollPosition = window.scrollY + 150;
 
       for (let i = sections.length - 1; i >= 0; i--) {

@@ -11,6 +11,13 @@ const experiences = [
     icon: '🤖',
   },
   {
+    year: 'Mar - May 2026',
+    title: 'Generative AI Application Developer',
+    company: 'NCEAC - HEC Training (Cohort 3) · UETIANS Lahore Endowment Foundation',
+    description: '3-month intensive Generative AI training covering LLM application development, prompt engineering, RAG pipelines, and agentic workflows — delivered in collaboration with HEC, Pak Angels, iCode Guru, and Spire Pakistan. Graduated with a Top Performer award.',
+    icon: '🏆',
+  },
+  {
     year: '2024 - 2026 (Ongoing)',
     title: 'AI & Web 3.0 Program',
     company: 'GIAIC (Governor Sindh Initiative)',

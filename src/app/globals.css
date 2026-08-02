@@ -129,18 +129,27 @@ body::before {
   0% {
     transform: translateX(0);
   }
+  /* Two identical sets separated by the 1.5rem flex gap: travelling one set
+     plus that gap (50% + half a gap) lands set two exactly where set one began. */
   100% {
-    transform: translateX(-50%);
+    transform: translateX(calc(-50% - 0.75rem));
   }
 }
 
 .marquee-track {
-  animation: marquee 40s linear infinite;
+  width: max-content;
+  animation: marquee 20s linear infinite;
   will-change: transform;
 }
 
 .marquee-track:hover {
   animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track {
+    animation: none;
+  }
 }
 
 /* Subtle motion blur for marquee items */

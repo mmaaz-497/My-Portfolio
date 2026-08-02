@@ -80,10 +80,10 @@ const projects: Project[] = [
   {
     id: 3,
     title: 'CV Generator',
-    url: 'https://dynamic-resume-builder-xi-orcin.vercel.app/',
+    url: 'https://cvlamarankerja.com/en/',
     description: 'Dynamic resume builder with customizable templates and live preview.',
     tech: ['HTML', 'CSS', 'JavaScript'],
-    screenshot: '/project-screenshots/cv-generator.png',
+    screenshot: '/project-screenshots/cv-maker.png',
     category: 'tool',
   },
   {
@@ -121,7 +121,7 @@ const extendedProjects = [...projects, ...projects];
 export default function Projects() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
-  const [visibleCount, setVisibleCount] = useState(4);
+  const [visibleCount, setVisibleCount] = useState(3);
   const carouselRef = useRef<HTMLDivElement>(null);
   const autoPlayRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -132,7 +132,7 @@ export default function Projects() {
         setVisibleCount(1);
       } else if (window.innerWidth < 1024) {
         setVisibleCount(2);
-      } else if (window.innerWidth < 1280) {
+      } else if (window.innerWidth < 1600) {
         setVisibleCount(3);
       } else {
         setVisibleCount(4);
@@ -211,11 +211,11 @@ export default function Projects() {
       </motion.div>
 
       {/* Carousel Container */}
-      <div className="relative max-w-7xl mx-auto z-10 px-14 lg:px-16">
+      <div className="relative max-w-[1600px] mx-auto z-10 px-2 sm:px-14 lg:px-16">
         {/* Navigation Arrows */}
         <button
           onClick={prevSlide}
-          className="absolute left-0 top-1/2 -translate-y-1/2 z-30 w-12 h-12 rounded-full bg-[#1A1A1A] border border-[#00F5FF]/30 flex items-center justify-center group hover:bg-[#00F5FF]/10 transition-all duration-300 hover:shadow-[0_0_20px_rgba(0,245,255,0.3)]"
+          className="absolute left-0 top-1/2 -translate-y-1/2 z-30 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-[#1A1A1A] border border-[#00F5FF]/30 flex items-center justify-center group hover:bg-[#00F5FF]/10 transition-all duration-300 hover:shadow-[0_0_20px_rgba(0,245,255,0.3)]"
           aria-label="Previous project"
         >
           <svg
@@ -230,7 +230,7 @@ export default function Projects() {
 
         <button
           onClick={nextSlide}
-          className="absolute right-0 top-1/2 -translate-y-1/2 z-30 w-12 h-12 rounded-full bg-[#1A1A1A] border border-[#00F5FF]/30 flex items-center justify-center group hover:bg-[#00F5FF]/10 transition-all duration-300 hover:shadow-[0_0_20px_rgba(0,245,255,0.3)]"
+          className="absolute right-0 top-1/2 -translate-y-1/2 z-30 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-[#1A1A1A] border border-[#00F5FF]/30 flex items-center justify-center group hover:bg-[#00F5FF]/10 transition-all duration-300 hover:shadow-[0_0_20px_rgba(0,245,255,0.3)]"
           aria-label="Next project"
         >
           <svg
@@ -263,33 +263,26 @@ export default function Projects() {
           >
             {extendedProjects.map((project, index) => {
               const isActive = index % projects.length === currentIndex;
-              const isAdjacent =
-                index % projects.length === (currentIndex + 1) % projects.length ||
-                index % projects.length === (currentIndex - 1 + projects.length) % projects.length;
 
               return (
                 <div
                   key={`${project.id}-${index}`}
-                  className="flex-shrink-0 px-3"
+                  className="flex-shrink-0 px-3 flex"
                   style={{ width: `${cardWidth}%` }}
                 >
                   <motion.a
                     href={project.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={`block rounded-xl overflow-hidden transition-all duration-500 ${
-                      isActive
-                        ? 'opacity-100 scale-100'
-                        : isAdjacent
-                        ? 'opacity-70 scale-95'
-                        : 'opacity-50 scale-90 blur-[1px]'
+                    className={`block w-full h-full rounded-2xl overflow-hidden transition-all duration-500 ${
+                      isActive ? 'opacity-100' : 'opacity-80'
                     }`}
                     whileHover={{ y: -8, scale: 1.02 }}
                   >
                     {/* Card */}
-                    <div className="glass-card rounded-xl overflow-hidden group relative border border-[#00F5FF]/10 hover:border-[#00F5FF]/50 hover:shadow-[0_0_40px_rgba(0,245,255,0.2)] transition-all duration-500">
+                    <div className="h-full flex flex-col bg-[#1A1A1A]/70 backdrop-blur-xl rounded-2xl overflow-hidden group relative border border-[#00F5FF]/10 hover:border-[#00F5FF]/50 hover:shadow-[0_0_40px_rgba(0,245,255,0.2)] transition-all duration-500">
                       {/* Screenshot Container */}
-                      <div className="relative w-full h-48 bg-gradient-to-br from-[#1A1A1A] to-[#0A0A0A] overflow-hidden">
+                      <div className="relative w-full shrink-0 aspect-video bg-gradient-to-br from-[#1A1A1A] to-[#0A0A0A] overflow-hidden">
                         {/* Neon overlay */}
                         <div className="absolute inset-0 bg-gradient-to-tr from-[#00F5FF]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10" />
 
@@ -329,20 +322,20 @@ export default function Projects() {
                       </div>
 
                       {/* Card Content */}
-                      <div className="p-5">
-                        <h3 className="text-lg font-bold text-[#F1F1F1] mb-2 group-hover:text-[#00F5FF] transition-colors duration-300">
+                      <div className="p-5 flex flex-col flex-1">
+                        <h3 className="text-[17px] font-bold text-[#F1F1F1] mb-1.5 line-clamp-1 group-hover:text-[#00F5FF] transition-colors duration-300">
                           {project.title}
                         </h3>
-                        <p className="text-sm text-[#A3A3A3] mb-4 leading-relaxed line-clamp-2">
+                        <p className="text-sm text-[#A3A3A3] mb-3.5 leading-relaxed line-clamp-2">
                           {project.description}
                         </p>
 
                         {/* Tech Stack Tags */}
-                        <div className="flex flex-wrap gap-2 mb-4">
+                        <div className="flex flex-wrap gap-1.5 mb-4">
                           {project.tech.map((tech) => (
                             <span
                               key={tech}
-                              className="px-3 py-1.5 bg-[#00F5FF]/5 text-[#00F5FF] text-xs font-medium rounded-full border border-[#00F5FF]/20 hover:bg-[#00F5FF]/10 hover:border-[#00F5FF]/40 hover:shadow-[0_0_10px_rgba(0,245,255,0.2)] transition-all duration-300"
+                              className="px-2.5 py-1 bg-[#00F5FF]/5 text-[#00F5FF] text-[11px] font-medium rounded-full border border-[#00F5FF]/20 hover:bg-[#00F5FF]/10 hover:border-[#00F5FF]/40 hover:shadow-[0_0_10px_rgba(0,245,255,0.2)] transition-all duration-300"
                             >
                               {tech}
                             </span>
@@ -350,7 +343,7 @@ export default function Projects() {
                         </div>
 
                         {/* View Project Button */}
-                        <div className="inline-flex items-center gap-2 px-4 py-2 bg-transparent border border-[#00F5FF]/30 rounded-lg text-[#00F5FF] text-sm font-semibold group-hover:bg-[#00F5FF]/10 group-hover:border-[#00F5FF]/50 group-hover:shadow-[0_0_15px_rgba(0,245,255,0.3)] transition-all duration-300">
+                        <div className="mt-auto self-start inline-flex items-center gap-2 px-3.5 py-1.5 bg-transparent border border-[#00F5FF]/30 rounded-full text-[#00F5FF] text-xs font-semibold group-hover:bg-[#00F5FF]/10 group-hover:border-[#00F5FF]/50 group-hover:shadow-[0_0_15px_rgba(0,245,255,0.3)] transition-all duration-300">
                           <span>View Project</span>
                           <svg
                             className="w-4 h-4 group-hover:translate-x-1 transition-transform"
