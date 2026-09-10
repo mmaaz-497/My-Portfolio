@@ -2,14 +2,7 @@
 
 import Link from 'next/link';
 import { siteConfig } from '@/config/site';
-
-const navLinks = [
-  { label: 'About', href: '#about' },
-  { label: 'Skills', href: '#skills' },
-  { label: 'Projects', href: '#projects' },
-  { label: 'Experience', href: '#experience' },
-  { label: 'Contact', href: '#contact' },
-];
+import { footerNavLinks } from '@/config/navigation';
 
 const socialLinks = [
   {
@@ -91,11 +84,11 @@ export default function Footer() {
           <div className="flex flex-col gap-4">
             <Link href="/" className="group inline-flex items-center" aria-label="2M">
               <span
-                className="flex h-12 w-12 items-center justify-center rounded-xl p-[1.5px] transition-all duration-300 group-hover:shadow-[0_0_28px_rgba(0,245,255,0.4)]"
+                className="flex h-16 w-16 items-center justify-center rounded-xl p-[1.5px] transition-all duration-300 group-hover:shadow-[0_0_28px_rgba(0,245,255,0.4)]"
                 style={{ background: 'linear-gradient(135deg, rgba(0,245,255,0.6), rgba(0,245,255,0.1) 45%, transparent)' }}
               >
                 <span
-                  className="flex h-full w-full items-center justify-center rounded-[10px] text-xl font-black leading-none tracking-tighter"
+                  className="flex h-full w-full items-center justify-center rounded-[12px] text-[28px] font-black leading-none tracking-tighter"
                   style={{ background: '#0A0A0A' }}
                 >
                   <span style={{ color: '#00F5FF' }}>2</span>
@@ -128,7 +121,7 @@ export default function Footer() {
               Quick Links
             </h4>
             <ul className="flex flex-col gap-3">
-              {navLinks.map((link) => (
+              {footerNavLinks.map((link) => (
                 <li key={link.label}>
                   <Link
                     href={link.href}

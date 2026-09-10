@@ -4,16 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { siteConfig } from '@/config/site';
-
-const navLinks = [
-  { href: '#', label: 'Home', section: 'hero' },
-  { href: '#about', label: 'About', section: 'about' },
-  { href: '#skills', label: 'Skills', section: 'skills' },
-  { href: '#projects', label: 'Projects', section: 'projects' },
-  { href: '#experience', label: 'Experience', section: 'experience' },
-  { href: '#certifications', label: 'Certificates', section: 'certifications' },
-  { href: '#contact', label: 'Contact', section: 'contact' },
-];
+import { navLinks } from '@/config/navigation';
 
 const GithubIcon = ({ className = 'w-5 h-5' }: { className?: string }) => (
   <svg className={className} viewBox="0 0 24 24" fill="currentColor">
@@ -36,12 +27,11 @@ export default function Header() {
     const handleScroll = () => {
       setScrolled(window.scrollY > 50);
 
-      const sections = ['hero', 'about', 'skills', 'projects', 'experience', 'certifications', 'contact'];
+      const sections = navLinks.map((link) => link.section);
       const scrollPosition = window.scrollY + 150;
 
       for (let i = sections.length - 1; i >= 0; i--) {
-        const sectionId = sections[i] === 'hero' ? '' : sections[i];
-        const element = document.getElementById(sectionId);
+        const element = document.getElementById(sections[i]);
         if (element && element.offsetTop <= scrollPosition) {
           setActiveSection(sections[i]);
           break;
@@ -76,12 +66,12 @@ export default function Header() {
           aria-label="2M — back to top"
           className="group flex items-center"
         >
-          <span className="relative flex h-10 w-10 md:h-11 md:w-11 items-center justify-center rounded-xl bg-gradient-to-br from-[#00F5FF]/60 via-[#00F5FF]/10 to-transparent p-[1.5px] transition-all duration-300 group-hover:shadow-[0_0_28px_rgba(0,245,255,0.4)]">
-            <span className="flex h-full w-full items-center justify-center rounded-[10px] bg-[#0A0A0A] font-black leading-none tracking-tighter text-[17px] md:text-[19px]">
+          <span className="relative flex h-12 w-12 md:h-14 md:w-14 items-center justify-center rounded-xl bg-gradient-to-br from-[#00F5FF]/60 via-[#00F5FF]/10 to-transparent p-[1.5px] transition-all duration-300 group-hover:shadow-[0_0_28px_rgba(0,245,255,0.4)]">
+            <span className="flex h-full w-full items-center justify-center rounded-[11px] bg-[#0A0A0A] font-black leading-none tracking-tighter text-[21px] md:text-[24px]">
               <span className="text-[#00F5FF]">2</span>
               <span className="text-[#F1F1F1] transition-colors duration-300 group-hover:text-[#00F5FF]">M</span>
             </span>
-            <span className="absolute -right-[3px] -top-[3px] h-1.5 w-1.5 rounded-full bg-[#00F5FF] shadow-[0_0_8px_#00F5FF] animate-pulse" />
+            <span className="absolute -right-[3px] -top-[3px] h-2 w-2 rounded-full bg-[#00F5FF] shadow-[0_0_8px_#00F5FF] animate-pulse" />
           </span>
         </Link>
 
@@ -193,8 +183,8 @@ export default function Header() {
             >
               <div className="flex flex-col h-full">
                 <div className="flex items-center justify-between p-4 border-b border-[#00F5FF]/10">
-                  <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-[#00F5FF]/60 via-[#00F5FF]/10 to-transparent p-[1.5px]">
-                    <span className="flex h-full w-full items-center justify-center rounded-[7px] bg-[#0A0A0A] text-[15px] font-black leading-none tracking-tighter">
+                  <span className="flex h-11 w-11 items-center justify-center rounded-lg bg-gradient-to-br from-[#00F5FF]/60 via-[#00F5FF]/10 to-transparent p-[1.5px]">
+                    <span className="flex h-full w-full items-center justify-center rounded-[8px] bg-[#0A0A0A] text-[18px] font-black leading-none tracking-tighter">
                       <span className="text-[#00F5FF]">2</span>
                       <span className="text-[#F1F1F1]">M</span>
                     </span>
