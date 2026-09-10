@@ -58,11 +58,23 @@ export default function Image() {
             zIndex: 10,
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{ fontSize: '28px', fontWeight: '800', color: '#00F5FF', letterSpacing: '-0.5px' }}>
-              Maaz
-            </span>
-            <span style={{ fontSize: '28px', color: '#00BFFF' }}>.</span>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: '46px',
+              height: '46px',
+              borderRadius: '12px',
+              border: '1px solid rgba(0, 245, 255, 0.5)',
+              background: 'rgba(0, 245, 255, 0.06)',
+              fontSize: '24px',
+              fontWeight: '900',
+              letterSpacing: '-1px',
+            }}
+          >
+            <span style={{ color: '#00F5FF' }}>2</span>
+            <span style={{ color: '#F1F1F1' }}>M</span>
           </div>
           <div style={{ display: 'flex', gap: '30px', fontSize: '16px', color: '#F1F1F1' }}>
             <span>Home</span>

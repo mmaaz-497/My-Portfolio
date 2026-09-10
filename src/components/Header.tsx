@@ -69,16 +69,20 @@ export default function Header() {
       }`}
     >
       <div className="flex flex-wrap md:flex-nowrap justify-between items-center px-6 lg:px-12 py-4 max-w-[1400px] mx-auto">
-        {/* Logo */}
+        {/* Logo — 2M monogram */}
         <Link
           href="#"
           onClick={() => handleNavClick('hero')}
-          className="group flex items-center gap-1 text-2xl md:text-3xl font-black tracking-tight"
+          aria-label="2M — back to top"
+          className="group flex items-center"
         >
-          <span className="text-[#F1F1F1] group-hover:text-[#00F5FF] transition-colors duration-300">
-            Maaz
+          <span className="relative flex h-10 w-10 md:h-11 md:w-11 items-center justify-center rounded-xl bg-gradient-to-br from-[#00F5FF]/60 via-[#00F5FF]/10 to-transparent p-[1.5px] transition-all duration-300 group-hover:shadow-[0_0_28px_rgba(0,245,255,0.4)]">
+            <span className="flex h-full w-full items-center justify-center rounded-[10px] bg-[#0A0A0A] font-black leading-none tracking-tighter text-[17px] md:text-[19px]">
+              <span className="text-[#00F5FF]">2</span>
+              <span className="text-[#F1F1F1] transition-colors duration-300 group-hover:text-[#00F5FF]">M</span>
+            </span>
+            <span className="absolute -right-[3px] -top-[3px] h-1.5 w-1.5 rounded-full bg-[#00F5FF] shadow-[0_0_8px_#00F5FF] animate-pulse" />
           </span>
-          <span className="text-[#00F5FF] text-3xl md:text-4xl animate-pulse">.</span>
         </Link>
 
         {/* Desktop Nav */}
@@ -188,7 +192,13 @@ export default function Header() {
               className="fixed right-0 top-0 h-screen w-72 bg-[#0A0A0A]/95 backdrop-blur-2xl border-l border-[#00F5FF]/10 shadow-2xl z-50 md:hidden"
             >
               <div className="flex flex-col h-full">
-                <div className="flex justify-end p-4">
+                <div className="flex items-center justify-between p-4 border-b border-[#00F5FF]/10">
+                  <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-[#00F5FF]/60 via-[#00F5FF]/10 to-transparent p-[1.5px]">
+                    <span className="flex h-full w-full items-center justify-center rounded-[7px] bg-[#0A0A0A] text-[15px] font-black leading-none tracking-tighter">
+                      <span className="text-[#00F5FF]">2</span>
+                      <span className="text-[#F1F1F1]">M</span>
+                    </span>
+                  </span>
                   <button
                     onClick={() => setIsOpen(false)}
                     className="text-[#00F5FF] p-2 rounded-lg hover:bg-[#00F5FF]/10 transition-all"

@@ -89,15 +89,18 @@ export default function Footer() {
 
           {/* Column 1: Logo & Tagline */}
           <div className="flex flex-col gap-4">
-            <Link href="/" className="inline-block">
+            <Link href="/" className="group inline-flex items-center" aria-label="2M">
               <span
-                className="text-3xl font-bold tracking-tight"
-                style={{
-                  color: '#F1F1F1',
-                  textShadow: '0 0 20px rgba(0,245,255,0.15)',
-                }}
+                className="flex h-12 w-12 items-center justify-center rounded-xl p-[1.5px] transition-all duration-300 group-hover:shadow-[0_0_28px_rgba(0,245,255,0.4)]"
+                style={{ background: 'linear-gradient(135deg, rgba(0,245,255,0.6), rgba(0,245,255,0.1) 45%, transparent)' }}
               >
-                M<span style={{ color: '#00F5FF' }}>aaz</span>
+                <span
+                  className="flex h-full w-full items-center justify-center rounded-[10px] text-xl font-black leading-none tracking-tighter"
+                  style={{ background: '#0A0A0A' }}
+                >
+                  <span style={{ color: '#00F5FF' }}>2</span>
+                  <span style={{ color: '#F1F1F1' }}>M</span>
+                </span>
               </span>
             </Link>
             <p
