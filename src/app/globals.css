@@ -22,6 +22,9 @@
 
 html {
   scroll-behavior: smooth;
+  /* Keeps anchored sections clear of the sticky header (~88px tall on desktop)
+     so their heading is not hidden behind it when a nav link is clicked. */
+  scroll-padding-top: 6rem;
 }
 
 body {

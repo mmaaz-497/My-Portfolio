@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 
 interface Service {
@@ -151,14 +152,22 @@ const fallbackImage = (title: string) =>
   )}`;
 
 function ServiceCard({ service, index, large = false }: { service: Service; index: number; large?: boolean }) {
+  const [imageFailed, setImageFailed] = useState(false);
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ delay: index * 0.08, duration: 0.5 }}
-      whileHover={{ y: -8 }}
-      className="group flex h-full flex-col overflow-hidden rounded-2xl border border-[#00F5FF]/10 bg-[#1A1A1A]/70 backdrop-blur-xl transition-all duration-500 hover:border-[#00F5FF]/50 hover:shadow-[0_0_40px_rgba(0,245,255,0.2)]"
+      // Own transition: the component-level `delay` above is the default for
+      // every animation on this element, and would otherwise stall the hover
+      // lift by up to 0.4s on later cards.
+      whileHover={{ y: -8, transition: { duration: 0.3, delay: 0 } }}
+      // Scoped to border/shadow on purpose: `transition-all` would also cover
+      // `transform`, layering a 500ms CSS ease over the transform Framer Motion
+      // sets for whileHover and visibly slowing the lift.
+      className="group flex h-full flex-col overflow-hidden rounded-2xl border border-[#00F5FF]/10 bg-[#1A1A1A]/70 backdrop-blur-xl transition-[border-color,box-shadow] duration-500 hover:border-[#00F5FF]/50 hover:shadow-[0_0_40px_rgba(0,245,255,0.2)]"
     >
       {/* Visual */}
       <div className="relative aspect-video w-full shrink-0 overflow-hidden bg-gradient-to-br from-[#1A1A1A] to-[#0A0A0A]">
@@ -166,15 +175,14 @@ function ServiceCard({ service, index, large = false }: { service: Service; inde
         {/* persistent vignette so light screenshots blend into the dark card */}
         <div className="absolute inset-x-0 bottom-0 z-10 h-2/3 bg-gradient-to-t from-[#0A0A0A] via-[#0A0A0A]/50 to-transparent" />
         <img
-          src={service.image}
+          src={imageFailed ? fallbackImage(service.title) : service.image}
           alt={`${service.title} visual`}
           loading="lazy"
           className="h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
-          onError={(e) => {
-            const t = e.target as HTMLImageElement;
-            t.onerror = null;
-            t.src = fallbackImage(service.title);
-          }}
+          // Flag in state rather than reassigning src on the node: React's
+          // onError is delegated, so clearing the DOM `onerror` property would
+          // not disarm it, and a failing fallback would re-fire forever.
+          onError={() => setImageFailed(true)}
         />
         {/* Icon tile */}
         <div className="absolute bottom-3 left-3 z-20 flex h-11 w-11 items-center justify-center rounded-xl border border-[#00F5FF]/30 bg-[#0A0A0A]/85 text-[#00F5FF] backdrop-blur-sm transition-all duration-300 group-hover:bg-[#00F5FF]/10 group-hover:shadow-[0_0_15px_rgba(0,245,255,0.35)]">
