@@ -102,6 +102,20 @@ body::before {
   transform: translateY(-4px);
 }
 
+/* Same look as .glass-card but without backdrop-filter: the skills marquee
+   renders many of these at once, continuously translating, and blurring each
+   one visibly drops frame rate on mobile GPUs. A solid, higher-opacity
+   background reads the same over this section's flat backdrop. */
+.marquee-card {
+  background: rgba(26, 26, 26, 0.92);
+  border: 1px solid rgba(0, 245, 255, 0.1);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.marquee-card:hover {
+  border-color: rgba(0, 245, 255, 0.4);
+}
+
 /* Line clamp utility */
 .line-clamp-2 {
   display: -webkit-box;

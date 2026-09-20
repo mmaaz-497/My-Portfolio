@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 
 interface Service {
   title: string;
@@ -167,18 +168,21 @@ function ServiceCard({ service, index, large = false }: { service: Service; inde
       // Scoped to border/shadow on purpose: `transition-all` would also cover
       // `transform`, layering a 500ms CSS ease over the transform Framer Motion
       // sets for whileHover and visibly slowing the lift.
-      className="group flex h-full flex-col overflow-hidden rounded-2xl border border-[#00F5FF]/10 bg-[#1A1A1A]/70 backdrop-blur-xl transition-[border-color,box-shadow] duration-500 hover:border-[#00F5FF]/50 hover:shadow-[0_0_40px_rgba(0,245,255,0.2)]"
+      // backdrop-blur-md, not -xl: this card repeats per service and a heavier
+      // blur radius on every tile compounds into visible scroll jank on mobile GPUs.
+      className="group flex h-full flex-col overflow-hidden rounded-2xl border border-[#00F5FF]/10 bg-[#1A1A1A]/70 backdrop-blur-md transition-[border-color,box-shadow] duration-500 hover:border-[#00F5FF]/50 hover:shadow-[0_0_40px_rgba(0,245,255,0.2)]"
     >
       {/* Visual */}
       <div className="relative aspect-video w-full shrink-0 overflow-hidden bg-gradient-to-br from-[#1A1A1A] to-[#0A0A0A]">
         <div className="absolute inset-0 z-10 bg-gradient-to-tr from-[#00F5FF]/25 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
         {/* persistent vignette so light screenshots blend into the dark card */}
         <div className="absolute inset-x-0 bottom-0 z-10 h-2/3 bg-gradient-to-t from-[#0A0A0A] via-[#0A0A0A]/50 to-transparent" />
-        <img
+        <Image
           src={imageFailed ? fallbackImage(service.title) : service.image}
           alt={`${service.title} visual`}
-          loading="lazy"
-          className="h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
+          fill
+          sizes="(max-width: 639px) 100vw, (max-width: 1023px) 50vw, 384px"
+          className="object-cover object-top transition-transform duration-500 group-hover:scale-105"
           // Flag in state rather than reassigning src on the node: React's
           // onError is delegated, so clearing the DOM `onerror` property would
           // not disarm it, and a failing fallback would re-fire forever.

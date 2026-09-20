@@ -24,14 +24,28 @@ export default function Header() {
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => {
+    const sections = navLinks.map((link) => link.section);
+    // Looked up once (and once more on resize, since layout can shift section
+    // offsets) instead of on every scroll tick: repeated getElementById +
+    // offsetTop reads inside a high-frequency scroll handler force a
+    // synchronous layout recalculation each time, which is what was making
+    // scrolling feel janky.
+    let elements: (HTMLElement | null)[] = sections.map((id) => document.getElementById(id));
+
+    const cacheElements = () => {
+      elements = sections.map((id) => document.getElementById(id));
+    };
+
+    let ticking = false;
+
+    const updateFromScroll = () => {
+      ticking = false;
       setScrolled(window.scrollY > 50);
 
-      const sections = navLinks.map((link) => link.section);
       const scrollPosition = window.scrollY + 150;
 
-      for (let i = sections.length - 1; i >= 0; i--) {
-        const element = document.getElementById(sections[i]);
+      for (let i = elements.length - 1; i >= 0; i--) {
+        const element = elements[i];
         if (element && element.offsetTop <= scrollPosition) {
           setActiveSection(sections[i]);
           break;
@@ -39,10 +53,21 @@ export default function Header() {
       }
     };
 
-    window.addEventListener('scroll', handleScroll);
-    handleScroll();
+    const handleScroll = () => {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(updateFromScroll);
+      }
+    };
 
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('resize', cacheElements, { passive: true });
+    updateFromScroll();
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', cacheElements);
+    };
   }, []);
 
   const handleNavClick = (section: string) => {

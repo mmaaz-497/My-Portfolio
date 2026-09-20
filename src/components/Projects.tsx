@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import Image from 'next/image';
 
 interface Project {
   id: number;
@@ -280,7 +281,10 @@ export default function Projects() {
                     whileHover={{ y: -8, scale: 1.02 }}
                   >
                     {/* Card */}
-                    <div className="h-full flex flex-col bg-[#1A1A1A]/70 backdrop-blur-xl rounded-2xl overflow-hidden group relative border border-[#00F5FF]/10 hover:border-[#00F5FF]/50 hover:shadow-[0_0_40px_rgba(0,245,255,0.2)] transition-all duration-500">
+                    {/* backdrop-blur-md, not -xl: this card repeats per project and a
+                    heavier blur radius on every tile compounds into visible scroll
+                    jank on mobile GPUs. */}
+                    <div className="h-full flex flex-col bg-[#1A1A1A]/70 backdrop-blur-md rounded-2xl overflow-hidden group relative border border-[#00F5FF]/10 hover:border-[#00F5FF]/50 hover:shadow-[0_0_40px_rgba(0,245,255,0.2)] transition-all duration-500">
                       {/* Screenshot Container */}
                       <div className="relative w-full shrink-0 aspect-video bg-gradient-to-br from-[#1A1A1A] to-[#0A0A0A] overflow-hidden">
                         {/* Neon overlay */}
@@ -306,11 +310,12 @@ export default function Projects() {
                         </div>
 
                         {/* Image */}
-                        <img
+                        <Image
                           src={project.screenshot}
                           alt={`${project.title} screenshot`}
-                          className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-110"
-                          loading="lazy"
+                          fill
+                          sizes="(max-width: 639px) 100vw, (max-width: 1023px) 50vw, (max-width: 1599px) 33vw, 25vw"
+                          className="object-cover object-top transition-transform duration-500 group-hover:scale-110"
                           onError={(e) => {
                             const target = e.target as HTMLImageElement;
                             target.onerror = null;

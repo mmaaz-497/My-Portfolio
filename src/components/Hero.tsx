@@ -1,11 +1,15 @@
 'use client';
 
+import { useState } from 'react';
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 import Link from 'next/link';
 import TypewriterEffect from './TypewriterEffect';
 import ParticlesBackground from './ParticlesBackground';
 
 export default function Hero() {
+  const [photoFailed, setPhotoFailed] = useState(false);
+
   return (
     <section id="hero" className="relative flex flex-col items-center justify-center min-h-screen text-center px-4 py-20 bg-[#0A0A0A] overflow-hidden">
       {/* Particles Background */}
@@ -23,19 +27,23 @@ export default function Hero() {
       >
         <div className="w-36 h-36 md:w-44 md:h-44 rounded-full p-[3px] bg-gradient-to-tr from-[#00F5FF] via-[#00BFFF] to-[#00F5FF] shadow-[0_0_40px_rgba(0,245,255,0.3)]">
           <div className="w-full h-full rounded-full bg-[#1A1A1A] flex items-center justify-center overflow-hidden">
-            <img
-              src="/profile.jpg"
-              alt="Muhammad Maaz"
-              className="w-full h-full object-cover rounded-full"
-              onError={(e) => {
-                const target = e.target as HTMLImageElement;
-                target.style.display = 'none';
-                const parent = target.parentElement;
-                if (parent) {
-                  parent.innerHTML = '<span class="text-5xl md:text-6xl font-bold bg-gradient-to-r from-[#00F5FF] to-[#00BFFF] bg-clip-text text-transparent">MM</span>';
-                }
-              }}
-            />
+            {photoFailed ? (
+              <span className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-[#00F5FF] to-[#00BFFF] bg-clip-text text-transparent">
+                MM
+              </span>
+            ) : (
+              <Image
+                src="/profile.jpg"
+                alt="Muhammad Maaz"
+                width={176}
+                height={176}
+                priority
+                fetchPriority="high"
+                sizes="(min-width: 768px) 176px, 144px"
+                className="w-full h-full object-cover rounded-full"
+                onError={() => setPhotoFailed(true)}
+              />
+            )}
           </div>
         </div>
         {/* Status Badge */}

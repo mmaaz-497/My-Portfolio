@@ -23,7 +23,10 @@ export default function ParticlesBackground() {
 
     let animationFrameId: number;
     const particles: Particle[] = [];
-    const particleCount = 60;
+    // Fewer particles on small/narrow viewports: the connection-line pass
+    // below is O(n^2), and mobile GPUs/CPUs feel that quadratic cost as
+    // visible frame drops far sooner than desktop does.
+    const particleCount = window.innerWidth < 768 ? 24 : 60;
 
     const resize = () => {
       canvas.width = window.innerWidth;

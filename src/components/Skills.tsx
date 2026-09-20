@@ -2,23 +2,26 @@
 
 import { motion } from 'framer-motion';
 
+// Self-hosted under public/skill-icons: avoids per-icon cross-origin DNS/TLS
+// round trips to cdn.jsdelivr.net / huggingface.co that were slowing this
+// section's first paint.
 const skills = [
-  { name: 'React', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg' },
-  { name: 'Next.js', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg' },
-  { name: 'TypeScript', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg' },
-  { name: 'Tailwind CSS', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tailwindcss/tailwindcss-original.svg' },
-  { name: 'Node.js', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg' },
-  { name: 'Python', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg' },
+  { name: 'React', icon: '/skill-icons/react.svg' },
+  { name: 'Next.js', icon: '/skill-icons/nextjs.svg' },
+  { name: 'TypeScript', icon: '/skill-icons/typescript.svg' },
+  { name: 'Tailwind CSS', icon: '/skill-icons/tailwindcss.svg' },
+  { name: 'Node.js', icon: '/skill-icons/nodejs.svg' },
+  { name: 'Python', icon: '/skill-icons/python.svg' },
   { name: 'OpenAI', icon: '/skill-icons/openai.svg' },
-  { name: 'Streamlit', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/streamlit/streamlit-original.svg' },
-  { name: 'Docker', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg' },
-  { name: 'Kubernetes', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/kubernetes/kubernetes-original.svg' },
-  { name: 'AWS', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/amazonwebservices/amazonwebservices-original-wordmark.svg' },
-  { name: 'Vercel', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vercel/vercel-original.svg' },
-  { name: 'Figma', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/figma/figma-original.svg' },
-  { name: 'Hugging Face', icon: 'https://huggingface.co/datasets/huggingface/brand-assets/resolve/main/hf-logo.svg' },
-  { name: 'Git', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg' },
-  { name: 'Sanity', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/sanity/sanity-original.svg' },
+  { name: 'Streamlit', icon: '/skill-icons/streamlit.svg' },
+  { name: 'Docker', icon: '/skill-icons/docker.svg' },
+  { name: 'Kubernetes', icon: '/skill-icons/kubernetes.svg' },
+  { name: 'AWS', icon: '/skill-icons/aws.svg' },
+  { name: 'Vercel', icon: '/skill-icons/vercel.svg' },
+  { name: 'Figma', icon: '/skill-icons/figma.svg' },
+  { name: 'Hugging Face', icon: '/skill-icons/huggingface.svg' },
+  { name: 'Git', icon: '/skill-icons/git.svg' },
+  { name: 'Sanity', icon: '/skill-icons/sanity.svg' },
 ];
 
 // The track renders this set twice; the marquee keyframe shifts it by exactly
@@ -82,7 +85,7 @@ export default function Skills() {
                     whileHover={{ scale: 1.08 }}
                     transition={{ type: "spring", stiffness: 300, damping: 20 }}
                   >
-                    <div className="glass-card rounded-2xl p-6 min-w-[140px] min-h-[140px] flex flex-col items-center justify-center gap-3 transition-all duration-300 cursor-pointer relative overflow-hidden group hover:border-[#00F5FF]/40 hover:shadow-[0_0_30px_rgba(0,245,255,0.2)]">
+                    <div className="marquee-card rounded-2xl p-6 min-w-[140px] min-h-[140px] flex flex-col items-center justify-center gap-3 transition-all duration-300 cursor-pointer relative overflow-hidden group hover:border-[#00F5FF]/40 hover:shadow-[0_0_30px_rgba(0,245,255,0.2)]">
                       {/* Hover glow effect */}
                       <div className="absolute inset-0 bg-gradient-to-br from-[#00F5FF]/0 to-[#00F5FF]/0 group-hover:from-[#00F5FF]/5 group-hover:to-transparent transition-all duration-500" />
                   

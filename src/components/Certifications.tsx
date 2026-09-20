@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import Image from 'next/image';
 
 const certificate = {
   title: 'Generative AI Application Developer',
@@ -108,11 +109,13 @@ export default function Certifications() {
               aria-label="View the Generative AI Application Developer certificate full size"
               className="md:col-span-3 group relative block w-full overflow-hidden rounded-xl border border-[#00F5FF]/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#00F5FF] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0A0A0A]"
             >
-              <img
+              <Image
                 src={certificate.image}
                 alt={`${certificate.title} certificate awarded to Muhammad Maaz`}
+                width={1280}
+                height={925}
+                sizes="(max-width: 767px) 100vw, 660px"
                 className="w-full h-auto transition-transform duration-500 group-hover:scale-105 motion-reduce:transform-none"
-                loading="lazy"
                 onError={(e) => {
                   const target = e.target as HTMLImageElement;
                   target.onerror = null;
