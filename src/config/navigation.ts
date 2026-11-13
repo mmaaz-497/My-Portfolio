@@ -11,7 +11,7 @@ export interface NavLink {
 }
 
 export const navLinks: NavLink[] = [
-  { href: '#', label: 'Home', section: 'hero', showInFooter: false },
+  { href: '#hero', label: 'Home', section: 'hero', showInFooter: false },
   { href: '#about', label: 'About', section: 'about', showInFooter: true },
   { href: '#skills', label: 'Skills', section: 'skills', showInFooter: true },
   { href: '#services', label: 'Services', section: 'services', showInFooter: true },

@@ -1,60 +1,50 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { useEffect } from 'react';
+import { setView, type Theme } from './three/sceneStore';
+import { useView } from './three/useView';
+import { MoonIcon, SunIcon } from './ui/Icons';
 
-export default function ThemeToggle() {
-  const [isDark, setIsDark] = useState(true);
+const readTheme = (): Theme => (document.documentElement.dataset.theme === 'light' ? 'light' : 'dark');
 
+// Same values as --background in globals.css.
+const BROWSER_BAR: Record<Theme, string> = { dark: '#0a0a0a', light: '#f3f6f9' };
+
+/** Tints the mobile browser's address bar to match the site theme, not the OS setting. */
+const syncBrowserBar = (theme: Theme) => {
+  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', BROWSER_BAR[theme]);
+};
+
+export default function ThemeToggle({ className = '' }: { className?: string }) {
+  const { theme } = useView();
+
+  // The inline script in layout.tsx has already applied the saved theme to
+  // <html>; mirror it into the store so the toggle and the 3D scene agree.
   useEffect(() => {
-    const savedTheme = localStorage.getItem('theme');
-    const isLight = savedTheme === 'light';
-    setIsDark(!isLight);
-    
-    if (isLight) {
-      document.documentElement.classList.add('light');
-    } else {
-      document.documentElement.classList.remove('light');
-    }
+    setView({ theme: readTheme() });
+    syncBrowserBar(readTheme());
   }, []);
 
-  const toggleTheme = () => {
-    const newIsDark = !isDark;
-    setIsDark(newIsDark);
-    
-    if (newIsDark) {
-      document.documentElement.classList.remove('light');
-      localStorage.setItem('theme', 'dark');
-    } else {
-      document.documentElement.classList.add('light');
-      localStorage.setItem('theme', 'light');
+  const toggle = () => {
+    const next: Theme = readTheme() === 'dark' ? 'light' : 'dark';
+    document.documentElement.dataset.theme = next;
+    try {
+      localStorage.setItem('theme', next);
+    } catch {
+      // Private browsing: the choice simply lasts for this visit.
     }
+    setView({ theme: next });
+    syncBrowserBar(next);
   };
 
   return (
-    <motion.button
-      onClick={toggleTheme}
-      className="fixed top-24 right-6 z-50 p-3 bg-gradient-to-r from-teal-500 to-teal-600 text-white rounded-full shadow-lg hover:shadow-teal-500/50 hover:scale-110 transition-all duration-300"
-      whileHover={{ scale: 1.1 }}
-      whileTap={{ scale: 0.9 }}
-      aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+    <button
+      type="button"
+      onClick={toggle}
+      aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+      className={`control-3d h-10 w-10 rounded-xl ${className}`}
     >
-      <motion.div
-        key={isDark ? 'dark' : 'light'}
-        initial={{ rotate: -180, opacity: 0 }}
-        animate={{ rotate: 0, opacity: 1 }}
-        transition={{ duration: 0.3 }}
-      >
-        {isDark ? (
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-          </svg>
-        ) : (
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-          </svg>
-        )}
-      </motion.div>
-    </motion.button>
+      {theme === 'dark' ? <SunIcon className="h-5 w-5" /> : <MoonIcon className="h-5 w-5" />}
+    </button>
   );
 }
