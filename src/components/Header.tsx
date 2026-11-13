@@ -1,49 +1,45 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import Link from 'next/link';
-import { motion, AnimatePresence } from 'framer-motion';
-import { siteConfig } from '@/config/site';
+import { useEffect, useRef, useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 import { navLinks } from '@/config/navigation';
+import { siteConfig } from '@/config/site';
+import Logo from './ui/Logo';
+import Portal from './ui/Portal';
+import ThemeToggle from './ThemeToggle';
+import { lockScroll, scrollToHash } from './ui/SmoothScroll';
+import { useFocusTrap } from './ui/useFocusTrap';
+import { CloseIcon, GithubIcon, LinkedInIcon, MenuIcon, XIcon } from './ui/Icons';
 
-const GithubIcon = ({ className = 'w-5 h-5' }: { className?: string }) => (
-  <svg className={className} viewBox="0 0 24 24" fill="currentColor">
-    <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-  </svg>
-);
-
-const LinkedInIcon = ({ className = 'w-5 h-5' }: { className?: string }) => (
-  <svg className={className} viewBox="0 0 24 24" fill="currentColor">
-    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-  </svg>
-);
+const socials = [
+  { label: 'GitHub', href: siteConfig.social.github, Icon: GithubIcon },
+  { label: 'LinkedIn', href: siteConfig.social.linkedin, Icon: LinkedInIcon },
+  { label: 'X', href: siteConfig.social.x, Icon: XIcon },
+];
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('hero');
   const [scrolled, setScrolled] = useState(false);
+  const drawer = useRef<HTMLDivElement>(null);
+  // Section a drawer link asked for; scrolled to once the drawer has released the page.
+  const pendingHash = useRef<string | null>(null);
 
   useEffect(() => {
     const sections = navLinks.map((link) => link.section);
-    // Looked up once (and once more on resize, since layout can shift section
-    // offsets) instead of on every scroll tick: repeated getElementById +
-    // offsetTop reads inside a high-frequency scroll handler force a
-    // synchronous layout recalculation each time, which is what was making
-    // scrolling feel janky.
+    // Section elements are looked up once (and again on resize) rather than on
+    // every scroll tick, and the handler is throttled to one run per frame, so
+    // scroll-spy never forces repeated layout work while scrolling.
     let elements: (HTMLElement | null)[] = sections.map((id) => document.getElementById(id));
-
     const cacheElements = () => {
       elements = sections.map((id) => document.getElementById(id));
     };
 
     let ticking = false;
-
     const updateFromScroll = () => {
       ticking = false;
-      setScrolled(window.scrollY > 50);
-
-      const scrollPosition = window.scrollY + 150;
-
+      setScrolled(window.scrollY > 40);
+      const scrollPosition = window.scrollY + window.innerHeight * 0.35;
       for (let i = elements.length - 1; i >= 0; i--) {
         const element = elements[i];
         if (element && element.offsetTop <= scrollPosition) {
@@ -52,7 +48,6 @@ export default function Header() {
         }
       }
     };
-
     const handleScroll = () => {
       if (!ticking) {
         ticking = true;
@@ -63,208 +58,199 @@ export default function Header() {
     window.addEventListener('scroll', handleScroll, { passive: true });
     window.addEventListener('resize', cacheElements, { passive: true });
     updateFromScroll();
-
     return () => {
       window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('resize', cacheElements);
     };
   }, []);
 
-  const handleNavClick = (section: string) => {
-    setActiveSection(section);
+  // While the drawer is open: freeze the page behind it and close on Escape.
+  useEffect(() => {
+    if (!isOpen) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setIsOpen(false);
+    };
+    // The drawer only exists below the desktop breakpoint; never leave the
+    // page locked if the window is widened past it.
+    const desktop = window.matchMedia('(min-width: 1280px)');
+    const onDesktop = () => {
+      if (desktop.matches) setIsOpen(false);
+    };
+    lockScroll(true);
+    window.addEventListener('keydown', onKey);
+    desktop.addEventListener('change', onDesktop);
+    return () => {
+      lockScroll(false);
+      window.removeEventListener('keydown', onKey);
+      desktop.removeEventListener('change', onDesktop);
+      if (pendingHash.current) {
+        scrollToHash(pendingHash.current);
+        pendingHash.current = null;
+      }
+    };
+  }, [isOpen]);
+
+  useFocusTrap(drawer, isOpen);
+
+  // Drawer links close the drawer first; the scroll runs once the page is unlocked.
+  const followFromDrawer = (event: React.MouseEvent<HTMLAnchorElement>, hash: string) => {
+    event.preventDefault();
+    pendingHash.current = hash;
     setIsOpen(false);
   };
 
   return (
-    <header
-      className={`sticky top-0 z-50 transition-all duration-500 ${
-        scrolled
-          ? 'bg-[#0A0A0A]/90 backdrop-blur-2xl shadow-[0_4px_30px_rgba(0,245,255,0.08)] border-b border-[#00F5FF]/10'
-          : 'bg-transparent border-b border-transparent'
-      }`}
-    >
-      <div className="flex flex-wrap md:flex-nowrap justify-between items-center px-6 lg:px-12 py-4 max-w-[1400px] mx-auto">
-        {/* Logo — 2M monogram */}
-        <Link
-          href="#"
-          onClick={() => handleNavClick('hero')}
-          aria-label="2M — back to top"
-          className="group flex items-center"
-        >
-          <span className="relative flex h-12 w-12 md:h-14 md:w-14 items-center justify-center rounded-xl bg-gradient-to-br from-[#00F5FF]/60 via-[#00F5FF]/10 to-transparent p-[1.5px] transition-all duration-300 group-hover:shadow-[0_0_28px_rgba(0,245,255,0.4)]">
-            <span className="flex h-full w-full items-center justify-center rounded-[11px] bg-[#0A0A0A] font-black leading-none tracking-tighter text-[21px] md:text-[24px]">
-              <span className="text-[#00F5FF]">2</span>
-              <span className="text-[#F1F1F1] transition-colors duration-300 group-hover:text-[#00F5FF]">M</span>
-            </span>
-            <span className="absolute -right-[3px] -top-[3px] h-2 w-2 rounded-full bg-[#00F5FF] shadow-[0_0_8px_#00F5FF] animate-pulse" />
-          </span>
-        </Link>
+    <header className="fixed inset-x-0 top-0 z-50 px-2.5 sm:px-4">
+      {/* At the top the bar is invisible; once the page scrolls it lifts off
+          the edge and becomes a floating glass bar. */}
+      <div
+        className={`mx-auto flex max-w-[1400px] items-center justify-between gap-4 rounded-2xl transition-[padding,margin] duration-500 ${
+          scrolled
+            ? 'glass mt-2.5 px-3 py-2 sm:px-4 lg:px-5'
+            : 'mt-0 border border-transparent px-2.5 py-3.5 sm:px-1 lg:px-6'
+        }`}
+      >
+        <a href="#hero" aria-label="Muhammad Maaz — back to top" className="flex items-center gap-3">
+          <Logo size={44} />
+          <span className="hidden text-sm font-semibold tracking-wide text-foreground sm:block">Muhammad Maaz</span>
+        </a>
 
-        {/* Desktop Nav */}
-        <nav className="hidden md:flex items-center space-x-1" aria-label="Desktop navigation">
+        {/* A pill of links; the highlight slides to whichever section is on screen. */}
+        <nav
+          className="well hidden items-center rounded-full p-1 xl:flex"
+          aria-label="Primary"
+        >
           {navLinks.map((link) => {
             const isActive = activeSection === link.section;
             return (
-              <Link
+              <a
                 key={link.label}
                 href={link.href}
-                onClick={() => handleNavClick(link.section)}
-                className={`relative px-4 py-2 text-sm font-semibold tracking-wide uppercase transition-all duration-300 group ${
-                  isActive
-                    ? 'text-[#00F5FF]'
-                    : 'text-[#A3A3A3] hover:text-[#F1F1F1]'
+                aria-current={isActive ? 'location' : undefined}
+                className={`relative rounded-full px-3.5 py-2 text-[13px] font-semibold tracking-wide transition-colors ${
+                  isActive ? 'text-accent' : 'text-muted hover:text-foreground'
                 }`}
               >
-                <span className="relative z-10">{link.label}</span>
-                <motion.span
-                  className={`absolute bottom-0 left-1/2 -translate-x-1/2 h-[2px] bg-[#00F5FF] rounded-full transition-all duration-300 ${
-                    isActive ? 'w-full shadow-[0_0_10px_#00F5FF]' : 'w-0 group-hover:w-full'
-                  }`}
-                  layoutId="activeNavIndicator"
-                  transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
-                />
-              </Link>
+                {isActive && (
+                  <motion.span
+                    layoutId="activeNavIndicator"
+                    className="key absolute inset-0 rounded-full"
+                    transition={{ type: 'spring', bounce: 0.2, duration: 0.5 }}
+                  />
+                )}
+                <span className="relative">{link.label}</span>
+              </a>
             );
           })}
-
-          {/* Social Icons */}
-          <div className="flex items-center gap-2 ml-4 pl-4 border-l border-[#00F5FF]/20">
-            <Link
-              href={siteConfig.social.github}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="p-2 text-[#A3A3A3] hover:text-[#00F5FF] hover:bg-[#00F5FF]/5 rounded-lg transition-all duration-300"
-              aria-label="GitHub"
-            >
-              <GithubIcon className="w-5 h-5" />
-            </Link>
-            <Link
-              href={siteConfig.social.linkedin}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="p-2 text-[#A3A3A3] hover:text-[#00F5FF] hover:bg-[#00F5FF]/5 rounded-lg transition-all duration-300"
-              aria-label="LinkedIn"
-            >
-              <LinkedInIcon className="w-5 h-5" />
-            </Link>
-          </div>
-
-          {/* Hire Me Button */}
-          <Link
-            href="#contact"
-            onClick={() => handleNavClick('contact')}
-            className="ml-4 px-6 py-2 border border-[#00F5FF] text-[#00F5FF] font-semibold text-sm uppercase tracking-wide rounded-lg hover:bg-[#00F5FF]/10 hover:shadow-[0_0_20px_rgba(0,245,255,0.3)] transition-all duration-300"
-          >
-            Hire Me
-          </Link>
         </nav>
 
-        {/* Mobile Menu Button */}
-        <div className="md:hidden">
+        <div className="flex items-center gap-2.5 sm:gap-3">
+          <ThemeToggle />
+          <a href="#contact" className="btn btn-primary hidden !px-5 !py-2.5 sm:inline-flex">
+            Hire Me
+          </a>
           <button
-            onClick={() => setIsOpen(!isOpen)}
-            className="text-[#00F5FF] focus:outline-none p-2"
-            aria-label={isOpen ? 'Close menu' : 'Open menu'}
+            type="button"
+            onClick={() => setIsOpen(true)}
+            className="control-3d h-10 w-10 rounded-xl !text-accent xl:hidden"
+            aria-label="Open menu"
+            aria-haspopup="dialog"
             aria-expanded={isOpen}
           >
-            <div className="w-6 h-6 flex flex-col justify-center items-center relative">
-              <span
-                className={`block w-6 h-0.5 bg-[#00F5FF] transition-all duration-300 absolute ${
-                  isOpen ? 'rotate-45' : '-translate-y-2'
-                }`}
-              />
-              <span
-                className={`block w-6 h-0.5 bg-[#00F5FF] transition-all duration-300 absolute ${
-                  isOpen ? 'opacity-0' : 'opacity-100'
-                }`}
-              />
-              <span
-                className={`block w-6 h-0.5 bg-[#00F5FF] transition-all duration-300 absolute ${
-                  isOpen ? '-rotate-45' : 'translate-y-2'
-                }`}
-              />
-            </div>
+            <MenuIcon className="h-5 w-5" />
           </button>
         </div>
       </div>
 
-      {/* Mobile Menu */}
-      <AnimatePresence>
-        {isOpen && (
-          <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black/80 backdrop-blur-sm z-40 md:hidden"
-              onClick={() => setIsOpen(false)}
-            />
-            <motion.div
-              initial={{ opacity: 0, x: '100%' }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: '100%' }}
-              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed right-0 top-0 h-screen w-72 bg-[#0A0A0A]/95 backdrop-blur-2xl border-l border-[#00F5FF]/10 shadow-2xl z-50 md:hidden"
-            >
-              <div className="flex flex-col h-full">
-                <div className="flex items-center justify-between p-4 border-b border-[#00F5FF]/10">
-                  <span className="flex h-11 w-11 items-center justify-center rounded-lg bg-gradient-to-br from-[#00F5FF]/60 via-[#00F5FF]/10 to-transparent p-[1.5px]">
-                    <span className="flex h-full w-full items-center justify-center rounded-[8px] bg-[#0A0A0A] text-[18px] font-black leading-none tracking-tighter">
-                      <span className="text-[#00F5FF]">2</span>
-                      <span className="text-[#F1F1F1]">M</span>
-                    </span>
-                  </span>
+      {/* Portalled to <body>: the header's backdrop-filter would otherwise trap
+          these fixed layers inside the header bar. */}
+      <Portal>
+        <AnimatePresence>
+          {isOpen && (
+            <>
+              <motion.div
+                key="menu-backdrop"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="fixed inset-0 z-[80] bg-black/60 backdrop-blur-sm xl:hidden"
+                onClick={() => setIsOpen(false)}
+              />
+              <motion.div
+                key="menu-drawer"
+                ref={drawer}
+                role="dialog"
+                aria-modal="true"
+                aria-label="Menu"
+                tabIndex={-1}
+                // Swings in on its outer edge, like a door opening toward the page.
+                initial={{ x: '100%', rotateY: -28 }}
+                animate={{ x: 0, rotateY: 0 }}
+                exit={{ x: '100%', rotateY: -28 }}
+                transition={{ type: 'spring', damping: 30, stiffness: 260 }}
+                style={{ transformPerspective: 1200, transformOrigin: '100% 50%' }}
+                className="fixed right-0 top-0 z-[90] flex h-dvh w-[min(20rem,88vw)] flex-col border-l border-line bg-background pb-[env(safe-area-inset-bottom)] shadow-[-30px_0_80px_-20px_var(--shadow)] outline-none xl:hidden"
+              >
+                <div className="flex items-center justify-between border-b border-line p-4">
+                  <Logo size={40} />
                   <button
+                    type="button"
                     onClick={() => setIsOpen(false)}
-                    className="text-[#00F5FF] p-2 rounded-lg hover:bg-[#00F5FF]/10 transition-all"
+                    className="control-3d h-10 w-10 rounded-xl !text-accent"
                     aria-label="Close menu"
                   >
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                    </svg>
+                    <CloseIcon className="h-5 w-5" />
                   </button>
                 </div>
 
-                <nav className="flex flex-col px-6 py-4 space-y-2 flex-1">
-                  {navLinks.map((link, index) => {
+                <nav className="flex flex-1 flex-col gap-1 overflow-y-auto overscroll-contain p-4" aria-label="Mobile" data-lenis-prevent>
+                  {navLinks.map((link, i) => {
                     const isActive = activeSection === link.section;
                     return (
-                      <motion.div
+                      <motion.a
                         key={link.label}
-                        initial={{ opacity: 0, x: 20 }}
+                        href={link.href}
+                        onClick={(event) => followFromDrawer(event, link.href)}
+                        aria-current={isActive ? 'location' : undefined}
+                        initial={{ opacity: 0, x: 24 }}
                         animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: index * 0.1 }}
+                        transition={{ duration: 0.35, delay: 0.08 + i * 0.04, ease: [0.2, 0.8, 0.2, 1] }}
+                        className={`flex items-center gap-4 rounded-xl px-4 py-3 text-base font-semibold transition-colors ${
+                          isActive ? 'key text-accent' : 'border border-transparent text-muted hover:bg-accent/5 hover:text-foreground'
+                        }`}
                       >
-                        <Link
-                          href={link.href}
-                          onClick={() => handleNavClick(link.section)}
-                          className={`block px-4 py-3 rounded-lg text-base font-medium transition-all duration-300 ${
-                            isActive
-                              ? 'bg-[#00F5FF]/10 text-[#00F5FF] border-l-2 border-[#00F5FF]'
-                              : 'text-[#A3A3A3] hover:bg-[#00F5FF]/5 hover:text-[#F1F1F1]'
-                          }`}
-                        >
-                          {link.label}
-                        </Link>
-                      </motion.div>
+                        <span className="font-mono text-[11px] text-accent/80">{String(i + 1).padStart(2, '0')}</span>
+                        {link.label}
+                      </motion.a>
                     );
                   })}
                 </nav>
 
-                <div className="px-6 py-4 border-t border-[#00F5FF]/10">
-                  <Link
-                    href="#contact"
-                    onClick={() => { setIsOpen(false); handleNavClick('contact'); }}
-                    className="block w-full text-center px-6 py-3 border border-[#00F5FF] text-[#00F5FF] font-semibold rounded-lg hover:bg-[#00F5FF]/10 transition-all duration-300"
-                  >
+                <div className="space-y-4 border-t border-line p-4">
+                  <ul className="flex justify-center gap-2">
+                    {socials.map(({ label, href, Icon }) => (
+                      <li key={label}>
+                        <a
+                          href={href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          aria-label={label}
+                          className="control-3d h-11 w-11 rounded-xl"
+                        >
+                          <Icon className="h-[18px] w-[18px]" />
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                  <a href="#contact" onClick={(event) => followFromDrawer(event, '#contact')} className="btn btn-primary w-full">
                     Hire Me
-                  </Link>
+                  </a>
                 </div>
-              </div>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
+              </motion.div>
+            </>
+          )}
+        </AnimatePresence>
+      </Portal>
     </header>
   );
 }

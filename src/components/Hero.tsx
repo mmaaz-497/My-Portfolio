@@ -1,147 +1,192 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import Image from 'next/image';
-import Link from 'next/link';
+import { siteConfig } from '@/config/site';
+import { heroLine, heroOffers, roles } from '@/data/about';
 import TypewriterEffect from './TypewriterEffect';
-import ParticlesBackground from './ParticlesBackground';
+import Magnetic from './ui/Magnetic';
+import TiltCard from './ui/TiltCard';
+import {
+  ArrowUpRightIcon,
+  BotIcon,
+  ChatIcon,
+  DownloadIcon,
+  GithubIcon,
+  LayersIcon,
+  LinkedInIcon,
+  XIcon,
+} from './ui/Icons';
+
+const socials = [
+  { label: 'GitHub', href: siteConfig.social.github, Icon: GithubIcon },
+  { label: 'LinkedIn', href: siteConfig.social.linkedin, Icon: LinkedInIcon },
+  { label: 'X', href: siteConfig.social.x, Icon: XIcon },
+];
+
+// One icon per entry of `heroOffers`, in the same order.
+const offerIcons = [BotIcon, ChatIcon, LayersIcon];
+
+const EASE = [0.2, 0.8, 0.2, 1] as const;
+
+const rise = (delay: number) => ({
+  initial: { opacity: 0, y: 24 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.8, delay, ease: EASE },
+});
+
+// The name is split on spaces so each word can rise out of its own mask.
+const nameWords = siteConfig.name.split(' ');
+
+/** How far a layer drifts against the pointer, in px: nearer layers move more. */
+const drift = (px: number) => ({ translate: `calc(var(--px, 0) * ${px}px) calc(var(--py, 0) * ${px}px)` });
 
 export default function Hero() {
-  const [photoFailed, setPhotoFailed] = useState(false);
+  const section = useRef<HTMLElement>(null);
+
+  // Mouse parallax between the text layers. The pointer position is written to
+  // two CSS variables once per frame; nothing re-renders.
+  useEffect(() => {
+    const el = section.current;
+    if (!el || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    let frameId = 0;
+    let x = 0;
+    let y = 0;
+    const apply = () => {
+      frameId = 0;
+      el.style.setProperty('--px', x.toFixed(3));
+      el.style.setProperty('--py', y.toFixed(3));
+    };
+    const onMove = (event: PointerEvent) => {
+      if (event.pointerType !== 'mouse') return;
+      x = (event.clientX / window.innerWidth) * 2 - 1;
+      y = (event.clientY / window.innerHeight) * 2 - 1;
+      if (!frameId) frameId = requestAnimationFrame(apply);
+    };
+    el.addEventListener('pointermove', onMove, { passive: true });
+    return () => {
+      el.removeEventListener('pointermove', onMove);
+      cancelAnimationFrame(frameId);
+    };
+  }, []);
 
   return (
-    <section id="hero" className="relative flex flex-col items-center justify-center min-h-screen text-center px-4 py-20 bg-[#0A0A0A] overflow-hidden">
-      {/* Particles Background */}
-      <ParticlesBackground />
-
-      {/* Gradient Orb */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#00F5FF]/5 rounded-full blur-[120px] pointer-events-none" />
-
-      {/* Profile Photo */}
-      <motion.div
-        className="relative mb-8 z-10"
-        initial={{ scale: 0, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        transition={{ duration: 0.8, ease: 'easeOut' }}
-      >
-        <div className="w-36 h-36 md:w-44 md:h-44 rounded-full p-[3px] bg-gradient-to-tr from-[#00F5FF] via-[#00BFFF] to-[#00F5FF] shadow-[0_0_40px_rgba(0,245,255,0.3)]">
-          <div className="w-full h-full rounded-full bg-[#1A1A1A] flex items-center justify-center overflow-hidden">
-            {photoFailed ? (
-              <span className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-[#00F5FF] to-[#00BFFF] bg-clip-text text-transparent">
-                MM
+    <section ref={section} id="hero" className="relative flex min-h-dvh items-center px-5 pb-20 pt-28 lg:px-10">
+      <div className="mx-auto w-full max-w-[1400px]">
+        {/* Text sits in the left column on desktop; the 3D core occupies the right. */}
+        {/* Width and heading size follow the viewport on desktop, so the text never runs under the core. */}
+        <div className="mx-auto max-w-2xl text-center lg:mx-0 lg:max-w-[min(42rem,50vw)] lg:text-left">
+          <motion.div {...rise(0.9)} style={drift(-10)}>
+            <span className="glass inline-flex items-center gap-2.5 rounded-full px-4 py-2 text-xs font-semibold uppercase tracking-widest text-foreground">
+              <span className="relative flex h-2 w-2">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-70 motion-reduce:animate-none" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" />
               </span>
-            ) : (
-              <Image
-                src="/profile.jpg"
-                alt="Muhammad Maaz"
-                width={176}
-                height={176}
-                priority
-                fetchPriority="high"
-                sizes="(min-width: 768px) 176px, 144px"
-                className="w-full h-full object-cover rounded-full"
-                onError={() => setPhotoFailed(true)}
-              />
-            )}
-          </div>
-        </div>
-        {/* Status Badge */}
-        <motion.div
-          className="absolute -bottom-2 left-1/2 -translate-x-1/2 px-4 py-1 bg-[#0A0A0A] border border-[#00F5FF]/30 rounded-full text-xs font-semibold text-[#00F5FF] whitespace-nowrap"
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1, duration: 0.5 }}
-        >
-          <span className="inline-block w-2 h-2 bg-[#00F5FF] rounded-full mr-2 animate-pulse" />
-          Available for Work
-        </motion.div>
-      </motion.div>
+              Available for Work
+            </span>
+          </motion.div>
 
-      {/* Main Heading */}
-      <motion.h1
-        className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-black text-[#F1F1F1] mb-4 leading-tight z-10"
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8 }}
-      >
-        Hi, I&apos;m{' '}
-        <span className="bg-gradient-to-r from-[#00F5FF] via-[#00BFFF] to-[#00F5FF] bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient">
-          Muhammad Maaz
-        </span>
-      </motion.h1>
+          <motion.p {...rise(1.0)} className="mt-7 font-mono text-sm uppercase tracking-[0.3em] text-muted">
+            Hi, I&apos;m
+          </motion.p>
+          <h1
+            aria-label={siteConfig.name}
+            style={drift(-5)}
+            className="mt-3 text-[clamp(2.75rem,12vw,3.75rem)] font-bold leading-[1.02] text-foreground sm:text-6xl lg:text-[clamp(3.5rem,5.6vw,6rem)]"
+          >
+            {nameWords.map((word, i) => (
+              // Padding/negative margin keep descenders inside the mask.
+              <span key={word} aria-hidden="true" className="-mb-2 inline-block overflow-hidden pb-2 align-bottom">
+                <motion.span
+                  className={`inline-block ${i === nameWords.length - 1 ? 'text-gradient' : ''}`}
+                  initial={{ y: '105%' }}
+                  animate={{ y: 0 }}
+                  transition={{ duration: 0.9, delay: 1.05 + i * 0.12, ease: EASE }}
+                >
+                  {word}
+                </motion.span>
+                {i < nameWords.length - 1 && ' '}
+              </span>
+            ))}
+          </h1>
 
-      {/* Typewriter Subtitle */}
-      <motion.div
-        className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#A3A3A3] mb-6 z-10 h-12"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.3, duration: 0.8 }}
-      >
-        <TypewriterEffect
-          texts={['Agentic AI Developer', 'Full-Stack Engineer', 'Python Expert', 'Next.js Specialist']}
-          typingSpeed={70}
-          deletingSpeed={40}
-          delayBetween={2000}
-        />
-      </motion.div>
+          <motion.p {...rise(1.3)} className="mt-5 h-9 text-xl font-semibold text-accent sm:text-2xl">
+            <TypewriterEffect texts={roles} />
+          </motion.p>
 
-      {/* Description */}
-      <motion.p
-        className="text-base sm:text-lg md:text-xl max-w-3xl text-[#A3A3A3] px-2 mb-10 leading-relaxed z-10"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.5, duration: 0.8 }}
-      >
-        Building intelligent, scalable solutions with{' '}
-        <span className="text-[#00F5FF] font-semibold">Next.js</span>,{' '}
-        <span className="text-[#00F5FF] font-semibold">Python</span>, and{' '}
-        <span className="text-[#00F5FF] font-semibold">AI Agents</span>{' '}
-        that drive innovation.
-      </motion.p>
+          <motion.p {...rise(1.4)} className="mx-auto mt-5 max-w-xl text-base leading-relaxed text-muted sm:text-lg lg:mx-0">
+            {heroLine}
+          </motion.p>
 
-      {/* CTA Buttons */}
-      <motion.div
-        className="flex flex-col sm:flex-row gap-4 z-10"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.7, duration: 0.8 }}
-      >
-        <Link
-          href="#projects"
-          className="group relative px-8 py-4 bg-[#00F5FF] text-[#0A0A0A] font-bold text-sm uppercase tracking-wider rounded-lg overflow-hidden transition-all duration-300 hover:shadow-[0_0_30px_rgba(0,245,255,0.5)] hover:scale-105"
-        >
-          <span className="relative z-10">View Projects</span>
-          <div className="absolute inset-0 bg-gradient-to-r from-[#00BFFF] to-[#00F5FF] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-        </Link>
-
-        <a
-          href="/resume.pdf"
-          download
-          className="group px-8 py-4 border-2 border-[#00F5FF]/50 text-[#00F5FF] font-bold text-sm uppercase tracking-wider rounded-lg hover:bg-[#00F5FF]/10 hover:border-[#00F5FF] hover:shadow-[0_0_20px_rgba(0,245,255,0.2)] transition-all duration-300 flex items-center justify-center gap-3"
-        >
-          <svg className="w-5 h-5 transition-transform group-hover:translate-y-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-          </svg>
-          Download CV
-        </a>
-      </motion.div>
-
-      {/* Scroll Indicator */}
-      <motion.div
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10"
-        animate={{ y: [0, 10, 0] }}
-        transition={{ repeat: Infinity, duration: 1.5, ease: 'easeInOut' }}
-        aria-label="Scroll down"
-      >
-        <div className="w-6 h-10 border-2 border-[#00F5FF]/30 rounded-full flex justify-center">
+          {/* Phones: buttons stack full-width, socials get their own row. */}
           <motion.div
-            className="w-1 h-3 bg-[#00F5FF] rounded-full mt-2"
-            animate={{ y: [0, 12, 0] }}
-            transition={{ repeat: Infinity, duration: 1.5, ease: 'easeInOut' }}
-          />
+            {...rise(1.5)}
+            className="mt-9 flex flex-col items-stretch gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-center sm:gap-4 lg:justify-start"
+          >
+            <Magnetic className="block sm:inline-block">
+              <a href="#projects" className="btn btn-primary w-full sm:w-auto">
+                View Projects
+              </a>
+            </Magnetic>
+            <Magnetic className="block sm:inline-block">
+              <a href={siteConfig.resume} download className="btn btn-ghost w-full sm:w-auto">
+                <DownloadIcon className="h-4 w-4" />
+                Download CV
+              </a>
+            </Magnetic>
+            <div className="mt-2 flex items-center justify-center gap-2 sm:ml-2 sm:mt-0">
+              {socials.map(({ label, href, Icon }) => (
+                <a
+                  key={label}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={label}
+                  className="control-3d h-11 w-11 rounded-xl"
+                >
+                  <Icon className="h-[18px] w-[18px]" />
+                </a>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* What he sells, readable at a glance. */}
+          <motion.ul {...rise(1.65)} style={drift(-14)} className="mt-12 grid gap-3 text-left sm:grid-cols-3">
+            {heroOffers.map((offer, i) => {
+              const Icon = offerIcons[i % offerIcons.length];
+              return (
+                <li key={offer.label}>
+                  <TiltCard className="h-full rounded-2xl" max={10}>
+                    <a href="#services" className="preserve-3d group flex h-full items-start gap-3 rounded-2xl p-4 sm:block">
+                      <span data-depth="2" className="flex items-center justify-between">
+                        <span className="chip-3d h-10 w-10">
+                          <Icon className="h-[18px] w-[18px]" />
+                        </span>
+                        <ArrowUpRightIcon className="hidden h-4 w-4 text-muted transition-[translate,color] duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-accent sm:block" />
+                      </span>
+                      <span data-depth="1" className="block sm:mt-3">
+                        <span className="block text-sm font-bold text-foreground">{offer.label}</span>
+                        <span className="mt-1 block text-xs leading-snug text-muted">{offer.detail}</span>
+                      </span>
+                    </a>
+                  </TiltCard>
+                </li>
+              );
+            })}
+          </motion.ul>
         </div>
-      </motion.div>
+      </div>
+
+      <a
+        href="#about"
+        aria-label="Scroll to About"
+        className="absolute bottom-6 left-1/2 hidden -translate-x-1/2 flex-col items-center gap-2 text-muted transition-colors hover:text-accent md:[@media(min-height:820px)]:flex"
+      >
+        <span className="font-mono text-[10px] uppercase tracking-[0.35em]">Scroll</span>
+        <span className="animate-float flex h-9 w-5 justify-center rounded-full border border-current pt-1.5">
+          <span className="h-1.5 w-0.5 rounded-full bg-current" />
+        </span>
+      </a>
     </section>
   );
 }

@@ -1,134 +1,73 @@
 'use client';
 
-import { motion } from 'framer-motion';
-
-// Self-hosted under public/skill-icons: avoids per-icon cross-origin DNS/TLS
-// round trips to cdn.jsdelivr.net / huggingface.co that were slowing this
-// section's first paint.
-const skills = [
-  { name: 'React', icon: '/skill-icons/react.svg' },
-  { name: 'Next.js', icon: '/skill-icons/nextjs.svg' },
-  { name: 'TypeScript', icon: '/skill-icons/typescript.svg' },
-  { name: 'Tailwind CSS', icon: '/skill-icons/tailwindcss.svg' },
-  { name: 'Node.js', icon: '/skill-icons/nodejs.svg' },
-  { name: 'Python', icon: '/skill-icons/python.svg' },
-  { name: 'OpenAI', icon: '/skill-icons/openai.svg' },
-  { name: 'Streamlit', icon: '/skill-icons/streamlit.svg' },
-  { name: 'Docker', icon: '/skill-icons/docker.svg' },
-  { name: 'Kubernetes', icon: '/skill-icons/kubernetes.svg' },
-  { name: 'AWS', icon: '/skill-icons/aws.svg' },
-  { name: 'Vercel', icon: '/skill-icons/vercel.svg' },
-  { name: 'Figma', icon: '/skill-icons/figma.svg' },
-  { name: 'Hugging Face', icon: '/skill-icons/huggingface.svg' },
-  { name: 'Git', icon: '/skill-icons/git.svg' },
-  { name: 'Sanity', icon: '/skill-icons/sanity.svg' },
-];
-
-// The track renders this set twice; the marquee keyframe shifts it by exactly
-// one set, so the second set takes the first set's place for a seamless loop.
-const marqueeSets = [0, 1];
+import Image from 'next/image';
+import { skillGroups } from '@/data/skills';
+import { useView } from './three/useView';
+import Reveal from './ui/Reveal';
+import SectionHeading from './ui/SectionHeading';
+import TiltCard from './ui/TiltCard';
 
 export default function Skills() {
+  const { enabled, quality } = useView();
+  // On desktop with the full scene, the icons also orbit the 3D core in the
+  // right half of the screen, so the list keeps to the left column. Everywhere
+  // else (phones, low-power devices, no WebGL) the list uses the full width.
+  const orbiting = enabled && quality === 'high';
+
   return (
-    <section id="skills" className="relative px-6 lg:px-12 py-24 bg-[#0A0A0A] overflow-hidden">
-      {/* Subtle particle/grid background */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute inset-0 opacity-[0.03]"
-          style={{
-            backgroundImage: `
-              radial-gradient(circle at 25% 25%, rgba(0, 245, 255, 0.15) 0%, transparent 50%),
-              radial-gradient(circle at 75% 75%, rgba(0, 191, 255, 0.1) 0%, transparent 50%)
-            `
-          }}
-        />
-      </div>
+    <section id="skills" className="relative px-5 py-24 lg:px-10 lg:py-32">
+      <div className="mx-auto max-w-6xl">
+        <div className={orbiting ? 'lg:max-w-[52%]' : ''}>
+          <SectionHeading
+            index="02"
+            align={orbiting ? 'left' : 'center'}
+            eyebrow="My Tech Stack"
+            title={
+              <>
+                Skills & <span className="text-gradient">Technologies</span>
+              </>
+            }
+            subtitle="Cutting-edge technologies I leverage to build exceptional digital experiences"
+          />
 
-      {/* Section Title */}
-      <motion.div
-        className="text-center mb-20 relative z-10"
-        initial={{ opacity: 0, y: -30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.8, ease: "easeOut" }}
-      >
-        <h2 className="text-4xl md:text-6xl lg:text-7xl font-black text-[#F1F1F1] tracking-tight">
-          Skills & <span className="text-[#00F5FF]">Technologies</span>
-        </h2>
-        {/* Neon underline */}
-        <div className="mt-4 mx-auto w-32 h-1.5 bg-gradient-to-r from-[#00F5FF] via-[#00BFFF] to-[#00F5FF] rounded-full relative">
-          <div className="absolute inset-0 blur-md bg-[#00F5FF] opacity-50 rounded-full" />
-        </div>
-        <p className="mt-6 text-[#A3A3A3] text-lg max-w-2xl mx-auto">
-          Cutting-edge technologies I leverage to build exceptional digital experiences
-        </p>
-      </motion.div>
-
-      {/* Infinite Scrolling Marquee */}
-      <div className="relative z-10 max-w-7xl mx-auto">
-        {/* Gradient fade edges */}
-        <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-[#0A0A0A] to-transparent z-20 pointer-events-none" />
-        <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-[#0A0A0A] to-transparent z-20 pointer-events-none" />
-
-        {/* Marquee track */}
-        <div className="relative overflow-hidden">
-          <div className="marquee-track flex gap-6">
-            {marqueeSets.map((set) => (
-              <div
-                key={set}
-                className="flex flex-shrink-0 gap-6"
-                aria-hidden={set === 1 ? true : undefined}
-              >
-                {skills.map((skill) => (
-                  <motion.div
-                    key={`${skill.name}-${set}`}
-                    className="flex-shrink-0 group"
-                    whileHover={{ scale: 1.08 }}
-                    transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                  >
-                    <div className="marquee-card rounded-2xl p-6 min-w-[140px] min-h-[140px] flex flex-col items-center justify-center gap-3 transition-all duration-300 cursor-pointer relative overflow-hidden group hover:border-[#00F5FF]/40 hover:shadow-[0_0_30px_rgba(0,245,255,0.2)]">
-                      {/* Hover glow effect */}
-                      <div className="absolute inset-0 bg-gradient-to-br from-[#00F5FF]/0 to-[#00F5FF]/0 group-hover:from-[#00F5FF]/5 group-hover:to-transparent transition-all duration-500" />
-                  
-                      {/* Icon */}
-                      <div className="relative w-16 h-16 flex items-center justify-center bg-[#0A0A0A] rounded-xl p-3 transition-all duration-300 group-hover:bg-[#00F5FF]/10 group-hover:shadow-[0_0_15px_rgba(0,245,255,0.3)]">
-                        <img
+          <div className={`grid gap-5 ${orbiting ? 'sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2' : 'sm:grid-cols-2 lg:grid-cols-4'}`}>
+            {skillGroups.map((group, i) => (
+              <Reveal key={group.title} variant="tilt" delay={i * 0.08} className="h-full">
+                <TiltCard className="h-full rounded-2xl" contentClassName="p-5" max={8}>
+                  <div data-depth="1" className="flex items-center justify-between">
+                    <h3 className="font-mono text-xs font-semibold uppercase tracking-[0.25em] text-accent">{group.title}</h3>
+                    <span className="chip-3d !rounded-full px-2.5 py-0.5 font-mono text-[11px] font-semibold">
+                      <span className="sr-only">Skills in this group: </span>
+                      {String(group.skills.length).padStart(2, '0')}
+                    </span>
+                  </div>
+                <ul className="-mx-2 mt-3 space-y-0.5">
+                  {group.skills.map((skill) => (
+                    <li
+                      key={skill.name}
+                      className="flex items-center gap-3 rounded-xl px-2 py-1.5 transition-colors duration-200 hover:bg-accent/10"
+                    >
+                      {/* Icons sit on a light plate so dark and light artwork both read in either theme. */}
+                      <span className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-plate shadow-[inset_0_1px_0_#fff,inset_0_-2px_3px_rgba(15,23,42,0.18),0_6px_12px_-6px_var(--shadow)]">
+                        <Image
                           src={skill.icon}
-                          alt={`${skill.name} logo`}
-                          className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-110"
-                          onError={(e) => {
-                            const target = e.target as HTMLImageElement;
-                            target.style.display = 'none';
-                            target.parentElement!.innerHTML = `<span class="text-3xl">⚡</span>`;
-                          }}
+                          alt=""
+                          width={22}
+                          height={22}
+                          unoptimized
+                          className={`h-[22px] w-[22px] object-contain ${skill.invert ? 'invert' : ''}`}
                         />
-                      </div>
-                  
-                      {/* Label */}
-                      <span className="text-sm font-semibold text-[#F1F1F1] group-hover:text-[#00F5FF] transition-colors duration-300 relative z-10">
-                        {skill.name}
                       </span>
-
-                      {/* Motion blur effect on hover */}
-                      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
-                        <div className="absolute inset-0 bg-[#00F5FF]/5 blur-xl" />
-                      </div>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
+                      <span className="text-sm font-medium text-foreground">{skill.name}</span>
+                    </li>
+                  ))}
+                </ul>
+                </TiltCard>
+              </Reveal>
             ))}
           </div>
         </div>
       </div>
-
-      {/* Bottom accent line */}
-      <motion.div
-        className="mt-20 mx-auto max-w-4xl h-px bg-gradient-to-r from-transparent via-[#00F5FF]/30 to-transparent"
-        initial={{ scaleX: 0 }}
-        whileInView={{ scaleX: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 1, delay: 0.3 }}
-      />
     </section>
   );
 }

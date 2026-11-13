@@ -1,421 +1,297 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useMemo, useRef, useState, type KeyboardEvent, type PointerEvent } from 'react';
 import Image from 'next/image';
+import { projectCategories, projects, type Project, type ProjectCategory } from '@/data/projects';
+import Reveal from './ui/Reveal';
+import SectionHeading from './ui/SectionHeading';
+import TiltCard from './ui/TiltCard';
+import { ArrowLeftIcon, ArrowRightIcon, ArrowUpRightIcon, CarouselIcon, GridIcon } from './ui/Icons';
 
-interface Project {
-  id: number;
-  title: string;
-  url: string;
-  description: string;
-  tech: string[];
-  screenshot: string;
-  category: 'ai' | 'web' | 'tool';
-}
+type Filter = 'all' | ProjectCategory;
+type View = 'carousel' | 'grid';
 
-const projects: Project[] = [
-  {
-    id: 7,
-    title: 'ZaraatAI',
-    url: 'https://crop-disease-detector-topaz.vercel.app/',
-    description: 'AI-powered web app that detects crop diseases from leaf photos using GPT-4 Vision — returns disease name, severity, treatment steps, and medicine recommendations in both Urdu and English.',
-    tech: ['Next.js 14', 'TypeScript', 'GPT-4 Vision', 'OpenAI Agents SDK', 'GSAP', 'jsPDF'],
-    screenshot: '/project-screenshots/zaraat-ai.png',
-    category: 'ai',
-  },
-  {
-    id: 8,
-    title: 'Physical AI Humanoid Robotics Book',
-    url: 'https://physical-ai-humanoid-robotics-textb-vert.vercel.app/',
-    description: 'An interactive digital textbook on humanoid robotics, powered by a RAG-based AI chatbot that answers your questions directly from the book\'s content.',
-    tech: ['Next.js', 'RAG', 'OpenAI', 'OpenAI Agents SDK', 'MCP Tools'],
-    screenshot: '/project-screenshots/physical-ai-robotics-book.png',
-    category: 'ai',
-  },
-  {
-    id: 9,
-    title: 'Todo App with Reminder',
-    url: 'https://todo-full-stack-web-application-self.vercel.app/',
-    description: 'A full-stack todo application with smart reminders to keep you on track — never miss a deadline or forget an important task again.',
-    tech: ['Next.js', 'PostgreSQL', 'OpenAI', 'Tailwind CSS', 'TypeScript', 'Auth'],
-    screenshot: '/project-screenshots/todo-app-reminder.jpg',
-    category: 'tool',
-  },
-  {
-    id: 10,
-    title: 'Restaurant Website',
-    url: 'https://quick-commerce-hackathon-zthw.vercel.app/',
-    description: 'A modern, visually rich restaurant website featuring menu browsing, online ordering, and a seamless user experience built for speed and style.',
-    tech: ['Next.js', 'Stripe', 'Sanity', 'TailwindCSS', 'TypeScript'],
-    screenshot: '/project-screenshots/restaurant-website-new.png',
-    category: 'web',
-  },
-  {
-    id: 11,
-    title: 'Task Manager App',
-    url: 'https://task-manager-one-psi-50.vercel.app/',
-    description: 'A minimal yet powerful daily task manager to organize your day, set priorities, and track progress — built for focus and productivity.',
-    tech: ['Next.js', 'TailwindCSS', 'TypeScript'],
-    screenshot: '/project-screenshots/task-manager-new.png',
-    category: 'tool',
-  },
-  {
-    id: 1,
-    title: 'Cooking Recipes AI Agent',
-    url: 'https://mmaaz-497-cooking-recipies-ai-agent-main-owgks1.streamlit.app/',
-    description: 'AI-powered cooking recipe suggestions based on ingredients and preferences.',
-    tech: ['AI', 'OpenAI', 'Streamlit'],
-    screenshot: '/project-screenshots/cooking-recipes-ai.jpg',
-    category: 'ai',
-  },
-  {
-    id: 2,
-    title: 'Agentic Essay Pilot',
-    url: 'https://agentic-essay-pilot.vercel.app/',
-    description: 'AI agent for essay generation and intelligent writing assistance.',
-    tech: ['OpenAI Agents SDK', 'OpenAI', 'ChatKit'],
-    screenshot: '/project-screenshots/agentic-essay-pilot.png',
-    category: 'ai',
-  },
-  {
-    id: 3,
-    title: 'CV Generator',
-    url: 'https://cvlamarankerja.com/en/',
-    description: 'Dynamic resume builder with customizable templates and live preview.',
-    tech: ['HTML', 'CSS', 'JavaScript'],
-    screenshot: '/project-screenshots/cv-maker.png',
-    category: 'tool',
-  },
-  {
-    id: 4,
-    title: 'Growth Mindset App',
-    url: 'https://mmaaz-497-growth-mindset-app-gfeevb.streamlit.app/',
-    description: 'An app focused on developing and tracking growth mindset habits.',
-    tech: ['Streamlit', 'Python'],
-    screenshot: '/project-screenshots/growth-mindset-app.jpg',
-    category: 'web',
-  },
-  {
-    id: 5,
-    title: 'Personal Library',
-    url: 'https://rk-personallibrarymanager.streamlit.app/',
-    description: 'Manage and organize your personal book library efficiently.',
-    tech: ['Streamlit', 'Python'],
-    screenshot: '/project-screenshots/personal-library.jpg',
-    category: 'web',
-  },
-  {
-    id: 6,
-    title: 'Blog Website',
-    url: 'https://blog-website-beige-psi.vercel.app/',
-    description: 'A full-featured blog website for content sharing and publishing.',
-    tech: ['Next.js', 'Sanity'],
-    screenshot: '/project-screenshots/blog-website.png',
-    category: 'web',
-  },
+const CATEGORY_LABEL: Record<ProjectCategory, string> = { ai: 'AI', web: 'Web', tool: 'Tool' };
+// Cards further than this from the centre are hidden.
+const VISIBLE_RANGE = 2;
+
+const VIEWS: { id: View; label: string; Icon: typeof GridIcon }[] = [
+  { id: 'carousel', label: 'Carousel', Icon: CarouselIcon },
+  { id: 'grid', label: 'Grid', Icon: GridIcon },
 ];
 
-// Duplicate projects for infinite loop effect
-const extendedProjects = [...projects, ...projects];
+/** Screenshot, text and link of one project. Shared by the carousel and the grid. */
+function ProjectContent({ project, sizes }: { project: Project; sizes: string }) {
+  return (
+    <>
+      {/* Rounds its own top corners: in the grid the card cannot clip without flattening its 3D layers. */}
+      <div className="relative m-px aspect-video shrink-0 overflow-hidden rounded-t-[calc(1.5rem-1px)] bg-card">
+        <Image
+          src={project.screenshot}
+          alt={`Screenshot of ${project.title}`}
+          fill
+          sizes={sizes}
+          // A native image drag would cancel the carousel's swipe gesture.
+          draggable={false}
+          className="object-cover object-top transition-transform duration-700 ease-out group-hover:scale-[1.04] motion-reduce:transform-none"
+        />
+        <span className="absolute left-4 top-4 rounded-full bg-background/85 px-3 py-1 font-mono text-[11px] font-semibold uppercase tracking-widest text-accent backdrop-blur">
+          {CATEGORY_LABEL[project.category]}
+        </span>
+      </div>
+      {/* Fixed line counts and row heights keep every card the same size. */}
+      <div className="preserve-3d flex flex-col p-5 sm:p-6">
+        <h3 data-depth="1" className="truncate text-lg font-bold leading-7 text-foreground sm:text-xl">{project.title}</h3>
+        <p className="mt-2 line-clamp-3 h-[4.5rem] text-sm leading-6 text-muted">{project.description}</p>
+        <ul className="mt-4 flex h-[60px] flex-wrap content-start gap-1.5 overflow-hidden">
+          {project.tech.map((tech) => (
+            <li
+              key={tech}
+              className="flex h-[27px] items-center rounded-md border border-line bg-accent/5 px-2 text-[11px] font-medium text-muted"
+            >
+              {tech}
+            </li>
+          ))}
+        </ul>
+        <a href={project.url} target="_blank" rel="noopener noreferrer" className="btn btn-primary mt-5 w-full shrink-0 !py-3">
+          Visit Live Site
+          <ArrowUpRightIcon className="btn-arrow h-4 w-4" />
+          <span className="sr-only"> — {project.title} (opens in a new tab)</span>
+        </a>
+      </div>
+    </>
+  );
+}
 
-export default function Projects() {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [isPaused, setIsPaused] = useState(false);
-  const [visibleCount, setVisibleCount] = useState(3);
-  const carouselRef = useRef<HTMLDivElement>(null);
-  const autoPlayRef = useRef<NodeJS.Timeout | null>(null);
-
-  // Update visible cards based on screen width
-  useEffect(() => {
-    const updateVisibleCount = () => {
-      if (window.innerWidth < 640) {
-        setVisibleCount(1);
-      } else if (window.innerWidth < 1024) {
-        setVisibleCount(2);
-      } else if (window.innerWidth < 1600) {
-        setVisibleCount(3);
-      } else {
-        setVisibleCount(4);
-      }
-    };
-
-    updateVisibleCount();
-    window.addEventListener('resize', updateVisibleCount);
-    return () => window.removeEventListener('resize', updateVisibleCount);
-  }, []);
-
-  const nextSlide = useCallback(() => {
-    setCurrentIndex((prevIndex) => {
-      const nextIndex = prevIndex + 1;
-      // Reset when we reach the end of the original set
-      if (nextIndex >= projects.length) {
-        return 0;
-      }
-      return nextIndex;
-    });
-  }, []);
-
-  const prevSlide = () => {
-    setCurrentIndex((prevIndex) => {
-      if (prevIndex <= 0) {
-        return projects.length - 1;
-      }
-      return prevIndex - 1;
-    });
-  };
-
-  const goToSlide = (index: number) => {
-    setCurrentIndex(index);
-  };
-
-  // Auto-play functionality
-  useEffect(() => {
-    if (!isPaused) {
-      autoPlayRef.current = setInterval(() => {
-        nextSlide();
-      }, 3000);
-    }
-
-    return () => {
-      if (autoPlayRef.current) {
-        clearInterval(autoPlayRef.current);
-      }
-    };
-  }, [isPaused, nextSlide]);
-
-  const cardWidth = 100 / visibleCount;
+function CarouselCard({ project, offset, onSelect }: { project: Project; offset: number; onSelect: () => void }) {
+  const distance = Math.abs(offset);
+  const isActive = offset === 0;
+  const hidden = distance > VISIBLE_RANGE;
 
   return (
-    <section id="projects" className="relative px-6 lg:px-12 py-24 bg-[#0A0A0A] overflow-hidden">
-      {/* Ambient Background Glow */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] bg-[#00F5FF]/5 rounded-full blur-[150px]" />
-        <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-[#00F5FF]/3 rounded-full blur-[120px]" />
-      </div>
+    <li
+      aria-hidden={!isActive}
+      // Every card sits in the same grid cell, so the carousel is as tall as
+      // its content needs at any screen width (no fixed height to overflow).
+      className="relative col-start-1 row-start-1 w-[min(84vw,540px)] justify-self-center transition-[transform,opacity] duration-700 ease-[cubic-bezier(0.2,0.8,0.2,1)] motion-reduce:transition-none"
+      style={{
+        transform: `translateX(${offset * 58}%) translateZ(${-distance * 240}px) rotateY(${offset * -30}deg)`,
+        opacity: hidden ? 0 : 1 - distance * 0.35,
+        zIndex: 10 - distance,
+        pointerEvents: hidden ? 'none' : 'auto',
+      }}
+    >
+      {/* Standing in space: a pool of light on the floor under the front card. */}
+      <span
+        className={`floor-shadow transition-opacity duration-700 ${isActive ? 'opacity-100' : 'opacity-0'}`}
+        aria-hidden="true"
+      />
+      {/* The front card also leans toward the pointer; side cards are covered by the button below. */}
+      <TiltCard plate="" max={isActive ? 4 : 0} className="rounded-3xl">
+        <article
+          // Opaque (not glass): the cards overlap, and a translucent front card
+          // would let the text of the ones behind it show through.
+          className={`group flex flex-col overflow-hidden rounded-3xl border bg-card ${
+            isActive ? 'border-accent/40 shadow-[var(--elev-3)]' : 'border-line'
+          }`}
+          inert={!isActive}
+        >
+          <ProjectContent project={project} sizes="(max-width: 640px) 84vw, 540px" />
+        </article>
+      </TiltCard>
 
-      {/* Section Title */}
-      <motion.div
-        className="text-center mb-20 relative z-10"
-        initial={{ opacity: 0, y: -30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.8 }}
-      >
-        <span className="text-[#00F5FF] text-sm font-semibold uppercase tracking-[0.3em]">
-          Portfolio
-        </span>
-        <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-[#F1F1F1] mt-4 leading-tight">
-          Featured <span className="text-[#00F5FF] neon-glow">Projects</span>
-        </h2>
-        <div className="w-24 h-1 bg-gradient-to-r from-[#00F5FF] to-[#00BFFF] mx-auto mt-6 rounded-full" />
-      </motion.div>
-
-      {/* Carousel Container */}
-      <div className="relative max-w-[1600px] mx-auto z-10 px-2 sm:px-14 lg:px-16">
-        {/* Navigation Arrows */}
+      {/* Side cards act as one big "bring to front" button. */}
+      {!isActive && !hidden && (
         <button
-          onClick={prevSlide}
-          className="absolute left-0 top-1/2 -translate-y-1/2 z-30 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-[#1A1A1A] border border-[#00F5FF]/30 flex items-center justify-center group hover:bg-[#00F5FF]/10 transition-all duration-300 hover:shadow-[0_0_20px_rgba(0,245,255,0.3)]"
-          aria-label="Previous project"
-        >
-          <svg
-            className="w-6 h-6 text-[#00F5FF] group-hover:scale-110 transition-transform"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-          </svg>
-        </button>
+          type="button"
+          tabIndex={-1}
+          onClick={onSelect}
+          aria-label={`Show ${project.title}`}
+          className="absolute inset-0 cursor-pointer rounded-3xl"
+        />
+      )}
+    </li>
+  );
+}
 
-        <button
-          onClick={nextSlide}
-          className="absolute right-0 top-1/2 -translate-y-1/2 z-30 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-[#1A1A1A] border border-[#00F5FF]/30 flex items-center justify-center group hover:bg-[#00F5FF]/10 transition-all duration-300 hover:shadow-[0_0_20px_rgba(0,245,255,0.3)]"
-          aria-label="Next project"
-        >
-          <svg
-            className="w-6 h-6 text-[#00F5FF] group-hover:scale-110 transition-transform"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-          </svg>
-        </button>
+export default function Projects() {
+  const [filter, setFilter] = useState<Filter>('all');
+  const [view, setView] = useState<View>('carousel');
+  const [active, setActive] = useState(0);
+  const swipeStart = useRef<number | null>(null);
 
-        {/* Carousel Viewport */}
-        <div
-          ref={carouselRef}
-          className="overflow-hidden"
-          onMouseEnter={() => setIsPaused(true)}
-          onMouseLeave={() => setIsPaused(false)}
-        >
-          <motion.div
-            className="flex"
-            animate={{
-              x: `-${currentIndex * cardWidth}%`,
-            }}
-            transition={{
-              type: 'spring',
-              stiffness: 300,
-              damping: 30,
-            }}
-          >
-            {extendedProjects.map((project, index) => {
-              const isActive = index % projects.length === currentIndex;
+  const list = useMemo(() => (filter === 'all' ? projects : projects.filter((p) => p.category === filter)), [filter]);
+  const current = list[active];
+  const last = list.length - 1;
 
+  const go = (index: number) => setActive(Math.min(Math.max(index, 0), last));
+  const changeFilter = (next: Filter) => {
+    setFilter(next);
+    setActive(0);
+  };
+
+  const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    const target: Record<string, number> = { ArrowLeft: active - 1, ArrowRight: active + 1, Home: 0, End: last };
+    if (!(event.key in target)) return;
+    event.preventDefault();
+    go(target[event.key]);
+  };
+
+  const handlePointerDown = (event: PointerEvent<HTMLDivElement>) => {
+    swipeStart.current = event.clientX;
+  };
+  const handlePointerUp = (event: PointerEvent<HTMLDivElement>) => {
+    if (swipeStart.current === null) return;
+    const dx = event.clientX - swipeStart.current;
+    swipeStart.current = null;
+    if (Math.abs(dx) > 50) go(active + (dx < 0 ? 1 : -1));
+  };
+
+  return (
+    <section id="projects" className="relative overflow-x-clip px-5 py-24 lg:px-10 lg:py-32">
+      <div className="mx-auto max-w-7xl">
+        <SectionHeading
+          index="04"
+          eyebrow="My Work"
+          title={
+            <>
+              Featured <span className="text-gradient">Projects</span>
+            </>
+          }
+          subtitle="Live, deployed work — open any of them and try it yourself."
+        />
+
+        <Reveal className="mb-10 flex flex-col items-center gap-4 md:flex-row md:justify-between">
+          <div className="well flex flex-wrap justify-center gap-1 rounded-full p-1" role="group" aria-label="Filter projects by type">
+            {projectCategories.map((category) => {
+              const selected = filter === category.id;
+              const count = category.id === 'all' ? projects.length : projects.filter((p) => p.category === category.id).length;
               return (
-                <div
-                  key={`${project.id}-${index}`}
-                  className="flex-shrink-0 px-3 flex"
-                  style={{ width: `${cardWidth}%` }}
+                <button
+                  key={category.id}
+                  type="button"
+                  onClick={() => changeFilter(category.id)}
+                  aria-pressed={selected}
+                  className={`rounded-full px-4 py-1.5 text-sm font-semibold transition-colors sm:px-5 ${
+                    selected ? 'key text-accent' : 'border border-transparent text-muted hover:text-foreground'
+                  }`}
                 >
-                  <motion.a
-                    href={project.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={`block w-full h-full rounded-2xl overflow-hidden transition-all duration-500 ${
-                      isActive ? 'opacity-100' : 'opacity-80'
-                    }`}
-                    whileHover={{ y: -8, scale: 1.02 }}
-                  >
-                    {/* Card */}
-                    {/* backdrop-blur-md, not -xl: this card repeats per project and a
-                    heavier blur radius on every tile compounds into visible scroll
-                    jank on mobile GPUs. */}
-                    <div className="h-full flex flex-col bg-[#1A1A1A]/70 backdrop-blur-md rounded-2xl overflow-hidden group relative border border-[#00F5FF]/10 hover:border-[#00F5FF]/50 hover:shadow-[0_0_40px_rgba(0,245,255,0.2)] transition-all duration-500">
-                      {/* Screenshot Container */}
-                      <div className="relative w-full shrink-0 aspect-video bg-gradient-to-br from-[#1A1A1A] to-[#0A0A0A] overflow-hidden">
-                        {/* Neon overlay */}
-                        <div className="absolute inset-0 bg-gradient-to-tr from-[#00F5FF]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10" />
-
-                        {/* External link icon */}
-                        <div className="absolute inset-0 flex items-center justify-center z-20 opacity-0 group-hover:opacity-100 transition-all duration-300">
-                          <div className="w-14 h-14 rounded-full bg-black/70 backdrop-blur-sm border border-[#00F5FF]/40 flex items-center justify-center">
-                            <svg
-                              className="w-6 h-6 text-[#00F5FF]"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-                              />
-                            </svg>
-                          </div>
-                        </div>
-
-                        {/* Image */}
-                        <Image
-                          src={project.screenshot}
-                          alt={`${project.title} screenshot`}
-                          fill
-                          sizes="(max-width: 639px) 100vw, (max-width: 1023px) 50vw, (max-width: 1599px) 33vw, 25vw"
-                          className="object-cover object-top transition-transform duration-500 group-hover:scale-110"
-                          onError={(e) => {
-                            const target = e.target as HTMLImageElement;
-                            target.onerror = null;
-                            target.src = `data:image/svg+xml,${encodeURIComponent(
-                              `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400"><rect fill="#1A1A1A" width="600" height="400"/><text x="300" y="200" text-anchor="middle" font-size="48" fill="#00F5FF" opacity="0.3">${project.title.split(' ')[0]}</text></svg>`
-                            )}`;
-                          }}
-                        />
-                      </div>
-
-                      {/* Card Content */}
-                      <div className="p-5 flex flex-col flex-1">
-                        <h3 className="text-[17px] font-bold text-[#F1F1F1] mb-1.5 line-clamp-1 group-hover:text-[#00F5FF] transition-colors duration-300">
-                          {project.title}
-                        </h3>
-                        <p className="text-sm text-[#A3A3A3] mb-3.5 leading-relaxed line-clamp-2">
-                          {project.description}
-                        </p>
-
-                        {/* Tech Stack Tags */}
-                        <div className="flex flex-wrap gap-1.5 mb-4">
-                          {project.tech.map((tech) => (
-                            <span
-                              key={tech}
-                              className="px-2.5 py-1 bg-[#00F5FF]/5 text-[#00F5FF] text-[11px] font-medium rounded-full border border-[#00F5FF]/20 hover:bg-[#00F5FF]/10 hover:border-[#00F5FF]/40 hover:shadow-[0_0_10px_rgba(0,245,255,0.2)] transition-all duration-300"
-                            >
-                              {tech}
-                            </span>
-                          ))}
-                        </div>
-
-                        {/* View Project Button */}
-                        <div className="mt-auto self-start inline-flex items-center gap-2 px-3.5 py-1.5 bg-transparent border border-[#00F5FF]/30 rounded-full text-[#00F5FF] text-xs font-semibold group-hover:bg-[#00F5FF]/10 group-hover:border-[#00F5FF]/50 group-hover:shadow-[0_0_15px_rgba(0,245,255,0.3)] transition-all duration-300">
-                          <span>View Project</span>
-                          <svg
-                            className="w-4 h-4 group-hover:translate-x-1 transition-transform"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M17 8l4 4m0 0l-4 4m4-4H3"
-                            />
-                          </svg>
-                        </div>
-                      </div>
-                    </div>
-                  </motion.a>
-                </div>
+                  {category.label} <span className="ml-1 font-mono text-xs opacity-70">{count}</span>
+                </button>
               );
             })}
-          </motion.div>
-        </div>
-
-        {/* Navigation Dots */}
-        <div className="flex justify-center items-center gap-3 mt-12">
-          {projects.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => goToSlide(index)}
-              className={`transition-all duration-300 rounded-full ${
-                currentIndex === index
-                  ? 'w-8 h-2 bg-[#00F5FF] shadow-[0_0_10px_rgba(0,245,255,0.5)]'
-                  : 'w-2 h-2 bg-[#A3A3A3]/30 hover:bg-[#00F5FF]/50'
-              }`}
-              aria-label={`Go to project ${index + 1}`}
-              aria-current={currentIndex === index ? 'true' : 'false'}
-            />
-          ))}
-        </div>
-
-        {/* Auto-play Indicator */}
-        <div className="flex justify-center items-center gap-2 mt-4 text-xs text-[#A3A3A3]">
-          <div className={`flex gap-1 ${isPaused ? 'opacity-50' : 'opacity-100'}`}>
-            <motion.div
-              className="w-1 h-1 bg-[#00F5FF] rounded-full"
-              animate={{ opacity: [0.3, 1, 0.3] }}
-              transition={{ duration: 1.5, repeat: Infinity }}
-            />
-            <motion.div
-              className="w-1 h-1 bg-[#00F5FF] rounded-full"
-              animate={{ opacity: [0.3, 1, 0.3] }}
-              transition={{ duration: 1.5, repeat: Infinity, delay: 0.3 }}
-            />
-            <motion.div
-              className="w-1 h-1 bg-[#00F5FF] rounded-full"
-              animate={{ opacity: [0.3, 1, 0.3] }}
-              transition={{ duration: 1.5, repeat: Infinity, delay: 0.6 }}
-            />
           </div>
-          <span>{isPaused ? 'Paused' : 'Auto-playing'}</span>
-        </div>
-      </div>
 
-      {/* Decorative Corner Elements */}
-      <div className="absolute top-20 left-10 w-20 h-20 border-l-2 border-t-2 border-[#00F5FF]/10 rounded-tl-lg pointer-events-none" />
-      <div className="absolute bottom-20 right-10 w-20 h-20 border-r-2 border-b-2 border-[#00F5FF]/10 rounded-br-lg pointer-events-none" />
+          {/* Carousel to browse one at a time, grid to see everything at once. */}
+          <div className="well flex gap-1 rounded-full p-1" role="group" aria-label="Project layout">
+            {VIEWS.map(({ id, label, Icon }) => {
+              const selected = view === id;
+              return (
+                <button
+                  key={id}
+                  type="button"
+                  onClick={() => setView(id)}
+                  aria-pressed={selected}
+                  className={`flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-semibold transition-colors ${
+                    selected ? 'key text-accent' : 'border border-transparent text-muted hover:text-foreground'
+                  }`}
+                >
+                  <Icon className="h-4 w-4" />
+                  {label}
+                </button>
+              );
+            })}
+          </div>
+        </Reveal>
+
+        {view === 'grid' ? (
+          <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {list.map((project, i) => (
+              // Keyed by filter too, so cards replay their entrance when the filter changes.
+              <li key={`${filter}-${project.id}`}>
+                <Reveal variant="tilt" delay={(i % 3) * 0.07} className="h-full">
+                  <TiltCard className="group h-full rounded-3xl">
+                    <article className="preserve-3d flex h-full flex-col">
+                      <ProjectContent project={project} sizes="(max-width: 640px) 92vw, (max-width: 1024px) 46vw, 400px" />
+                    </article>
+                  </TiltCard>
+                </Reveal>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <Reveal>
+            <div
+              role="group"
+              aria-roledescription="carousel"
+              aria-label="Projects. Use the left and right arrow keys to browse."
+              tabIndex={0}
+              onKeyDown={handleKeyDown}
+              onPointerDown={handlePointerDown}
+              onPointerUp={handlePointerUp}
+              onPointerCancel={() => (swipeStart.current = null)}
+              className="relative touch-pan-y select-none rounded-3xl"
+              style={{ perspective: '1600px' }}
+            >
+              <ul className="grid" style={{ transformStyle: 'preserve-3d' }}>
+                {list.map((project, i) => (
+                  <CarouselCard key={project.id} project={project} offset={i - active} onSelect={() => go(i)} />
+                ))}
+              </ul>
+            </div>
+
+            <div className="mt-8 flex items-center justify-center gap-4 sm:gap-5">
+              <button
+                type="button"
+                onClick={() => go(active - 1)}
+                disabled={active === 0}
+                aria-label="Previous project"
+                className="control-3d h-12 w-12 rounded-full !text-accent"
+              >
+                <ArrowLeftIcon className="h-5 w-5" />
+              </button>
+
+              {/* One dot per project; the active one stretches into a bar. */}
+              <ul className="flex max-w-[60vw] flex-wrap items-center justify-center gap-y-1">
+                {list.map((project, i) => (
+                  <li key={project.id}>
+                    <button
+                      type="button"
+                      onClick={() => go(i)}
+                      aria-label={`Show ${project.title}`}
+                      aria-current={i === active ? 'true' : undefined}
+                      // The padding makes a finger-sized target around a small dot.
+                      className="group/dot flex h-8 items-center px-1"
+                    >
+                      <span
+                        className={`block h-1.5 rounded-full transition-all duration-500 ${
+                          i === active ? 'w-7 bg-accent' : 'w-1.5 bg-muted/40 group-hover/dot:bg-accent/60'
+                        }`}
+                      />
+                    </button>
+                  </li>
+                ))}
+              </ul>
+
+              <button
+                type="button"
+                onClick={() => go(active + 1)}
+                disabled={active === last}
+                aria-label="Next project"
+                className="control-3d h-12 w-12 rounded-full !text-accent"
+              >
+                <ArrowRightIcon className="h-5 w-5" />
+              </button>
+            </div>
+
+            <p className="mt-3 text-center font-mono text-sm text-muted" aria-live="polite">
+              <span className="sr-only">{current?.title}, </span>
+              <span className="text-base font-bold text-foreground">{String(active + 1).padStart(2, '0')}</span> /{' '}
+              {String(list.length).padStart(2, '0')}
+            </p>
+          </Reveal>
+        )}
+      </div>
     </section>
   );
 }

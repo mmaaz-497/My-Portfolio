@@ -1,191 +1,57 @@
-# Muhammad Maaz - Portfolio Website
+# Muhammad Maaz — 3D Portfolio
 
-A modern, responsive portfolio website built with Next.js 15, TypeScript, and Tailwind CSS. This project showcases my skills as a Full-Stack Developer and features smooth animations powered by Framer Motion.
+Portfolio of Muhammad Maaz, Agentic AI & Full-Stack Developer. A single-page site with a scroll-driven WebGL scene: a reactive "AI core" that travels and changes with each section.
 
-## 🚀 Live Demo
+- **Live:** https://my-portfolio-ten-iota-25.vercel.app/
+- **Repo:** https://github.com/mmaaz-497/My-Portfolio
 
-[View Live Portfolio](https://your-portfolio-url.com) <!-- Replace with your actual deployment URL -->
+## Stack
 
-## ✨ Features
+- Next.js 16 (App Router), React 19, TypeScript
+- Tailwind CSS v4 (theme tokens in `src/app/globals.css`)
+- three.js with `@react-three/fiber`, `@react-three/drei`, `@react-three/postprocessing`
+- Framer Motion for section animation, Lenis for smooth scrolling
+- Formspree for the contact form
 
-- **Modern Design**: Clean, professional design with a dark theme and teal accent colors
-- **Responsive Layout**: Fully responsive design that works on all devices
-- **Smooth Animations**: Interactive animations powered by Framer Motion
-- **Interactive Navigation**: Sticky header with smooth scrolling navigation
-- **Project Showcase**: Display of 14+ personal projects with live links
-- **Skills Section**: Visual representation of technical skills
-- **Contact Information**: Easy access to email, GitHub, and LinkedIn profiles
-- **Mobile-First**: Optimized for mobile devices with collapsible navigation
-
-## 🛠️ Tech Stack
-
-### Frontend
-- **Next.js 15.3.2** - React framework with App Router
-- **React 19** - UI library
-- **TypeScript 5** - Type safety and better development experience
-- **Tailwind CSS 4** - Utility-first CSS framework
-- **Framer Motion 12.15.0** - Animation library
-
-### Development Tools
-- **ESLint** - Code linting and formatting
-- **PostCSS** - CSS processing
-- **Node.js** - Runtime environment
-
-## 📁 Project Structure
-
-```
-MAAZ_NEXTJS-PORTFOLIO/
-├── src/
-│   └── app/
-│       ├── globals.css          # Global styles
-│       ├── layout.tsx           # Root layout component
-│       └── page.tsx             # Main portfolio page
-├── public/                      # Static assets
-├── package.json                 # Dependencies and scripts
-├── tsconfig.json               # TypeScript configuration
-├── next.config.ts              # Next.js configuration
-├── tailwind.config.js          # Tailwind CSS configuration
-└── README.md                   # Project documentation
-```
-
-## 🚀 Getting Started
-
-### Prerequisites
-
-- Node.js 18+ 
-- npm or yarn package manager
-
-### Installation
-
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/mmaaz-497/maaz-nextjs-portfolio.git
-   cd maaz-nextjs-portfolio
-   ```
-
-2. **Install dependencies**
-   ```bash
-   npm install
-   # or
-   yarn install
-   ```
-
-3. **Run the development server**
-   ```bash
-   npm run dev
-   # or
-   yarn dev
-   ```
-
-4. **Open your browser**
-   Navigate to [http://localhost:3000](http://localhost:3000) to view the portfolio.
-
-### Build for Production
+## Run it
 
 ```bash
-npm run build
-npm start
+npm install
+npm run dev      # http://localhost:3000
+npm run build    # production build
+npm run lint
 ```
 
-## 📱 Sections
+## Where things live
 
-### 🏠 Hero Section
-- Animated introduction with name and professional description
-- Smooth fade-in animations using Framer Motion
-- Responsive typography and layout
+| Path | What it holds |
+|---|---|
+| `src/config/site.ts` | Name, email, location, CV path, social links, Formspree URL |
+| `src/config/navigation.ts` | Nav links (header, scroll-spy, footer) |
+| `src/data/*.ts` | All content: projects, services, skills, experience, certificate, bio |
+| `src/components/*.tsx` | Page sections (Hero, AboutMe, Skills, Services, Projects, ...) |
+| `src/components/ui/` | Shared pieces: tilt card, reveal, section heading, icons, logo, smooth scroll |
+| `src/components/three/` | The 3D scene |
+| `public/` | Profile photo, CV, certificate, project screenshots, service images, skill icons |
+| `design/` | Source artwork for the 2M monogram (not served) |
 
-### 🛠️ Skills Section
-- Visual grid of technical skills including:
-  - Frontend: HTML, CSS, JavaScript, TypeScript, React, Tailwind CSS
-  - Backend: Node.js, Next.js
-  - Tools: Python, Figma, Sanity
-- Hover effects and gradient styling
+### Editing content
 
-### 💼 Projects Section
-- Showcase of 14+ personal projects including:
-  - Growth Mindset App
-  - CV Generator
-  - Personal Library
-  - Unit Converter
-  - Interactive Resume
-  - Custom CSS Portfolio
-  - Restaurant Website
-  - Password Strength Meter
-  - Task Manager
-  - Random Joke Generator
-  - Planets Weight Calculator
-  - Time Zone Converter
-  - Cafe Management System
-  - AI Stateful Chatbot
-- Direct links to live projects
-- Responsive grid layout
+Add or change a project, service, skill or job by editing the matching file in `src/data/`. Sections and the 3D scene read from there, so nothing else needs to change. A service's "Shipped" link points at a project by `id`, so each URL is written once in `projects.ts`.
 
-### 📞 Contact Section
-- Professional contact information
-- Links to GitHub and LinkedIn profiles
-- Email contact option
+### The 3D scene
 
-## 🎨 Design Features
+- `journey.ts` — one pose per section (position, size, brightness). Tune the scroll journey here.
+- `AICore.tsx`, `AgentNetwork.tsx`, `ParticleField.tsx`, `SkillOrbit.tsx` — the objects.
+- `Scene.tsx` — canvas, camera rig, bloom.
+- `SceneCanvas.tsx` — decides whether the scene runs at all.
 
-- **Color Scheme**: Dark theme with teal (#14b8a6) and orange (#f97316) accents
-- **Typography**: Geist Sans and Geist Mono fonts for modern readability
-- **Animations**: Smooth transitions and hover effects
-- **Gradients**: Beautiful gradient backgrounds throughout the site
-- **Shadows**: Subtle drop shadows and glowing effects
+The scene is loaded only in the browser. Phones and low-power devices get a lighter version (fewer particles, no bloom, no skill orbit). Visitors with "reduce motion" enabled, or without WebGL, get a static gradient backdrop instead.
 
-## 📱 Responsive Design
+### Themes
 
-- **Mobile First**: Optimized for mobile devices
-- **Breakpoints**: 
-  - Mobile: < 768px
-  - Tablet: 768px - 1024px
-  - Desktop: > 1024px
-- **Navigation**: Collapsible mobile menu
-- **Grid Layouts**: Responsive grid systems for projects and skills
+Dark is the default. The header toggle switches to light and remembers the choice. Colours are CSS variables on `:root` and `[data-theme="light"]`; components use the generated utilities (`bg-background`, `text-accent`, `border-line`) rather than hex values.
 
-## 🚀 Deployment
+## Deployment
 
-This portfolio is designed to be deployed on platforms like:
-
-- **Vercel** (Recommended for Next.js)
-- **Netlify**
-- **GitHub Pages**
-- **Railway**
-
-### Vercel Deployment
-
-1. Push your code to GitHub
-2. Connect your repository to Vercel
-3. Deploy with zero configuration
-
-## 🤝 Contributing
-
-While this is a personal portfolio, suggestions and improvements are welcome! Feel free to:
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Submit a pull request
-
-## 📄 License
-
-This project is open source and available under the [MIT License](LICENSE).
-
-## 👨‍💻 About Me
-
-I'm Muhammad Maaz, a passionate Full-Stack Developer with expertise in:
-
-- **Frontend Development**: React, Next.js, TypeScript, Tailwind CSS
-- **Backend Development**: Node.js, Python
-- **AI Integration**: Learning Generative AI for intelligent applications
-- **UI/UX Design**: Figma, responsive design principles
-
-## 📞 Contact
-
-- **Email**: [mmaazjatt497@gmail.com](mailto:mmaazjatt497@gmail.com)
-- **GitHub**: [@mmaaz-497](https://github.com/mmaaz-497)
-- **LinkedIn**: [Muhammad Maaz](https://www.linkedin.com/in/muhammad-maaz-5448b5336)
-
----
-
-**Built with ❤️ using Next.js, TypeScript, and Tailwind CSS**
+Deployed on Vercel from the `main` branch. No environment variables are required.
